@@ -11,7 +11,6 @@ export class Asset extends Component {
     this.state = {
       analysisOpen: false,
     };
-    this.handleAnalysisClick = this.handleAnalysisClick.bind(this);
   }
 
   render() {
@@ -19,7 +18,7 @@ export class Asset extends Component {
     return (
       <Grid container direction="column">
         <Grid item>
-          <NavBar analysisOpen={this.handleAnalysisClick}></NavBar>
+          <NavBar></NavBar>
         </Grid>
         <br />
         <br />

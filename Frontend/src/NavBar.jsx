@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
@@ -21,10 +21,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function MenuAppBar() {
+export default function MenuAppBar(props) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
+  const name = props.name;
+  const [analysisOpen] = useState(props.analysis);
+  const [assetOpen] = useState(props.asset);
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -32,6 +35,14 @@ export default function MenuAppBar() {
 
   const handleClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleAssetChange = () => {
+    props.changeAsset();
+  };
+
+  const handleAnalysisChange = () => {
+    props.changeAnalysis();
   };
 
   return (
@@ -44,7 +55,12 @@ export default function MenuAppBar() {
             color="inherit"
             aria-label="menu"
           >
-            <Drawer />
+            <Drawer
+              Asset={assetOpen}
+              Analysis={analysisOpen}
+              changeAsset={handleAssetChange}
+              changeAnalysis={handleAnalysisChange}
+            />
           </IconButton>
           <Typography variant="h6" className={classes.title}>
             EasyInvest
@@ -58,6 +74,7 @@ export default function MenuAppBar() {
               onClick={handleMenu}
               color="inherit"
             >
+              <Typography>{name}</Typography>
               <AccountCircle />
             </IconButton>
             <Menu

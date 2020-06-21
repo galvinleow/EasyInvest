@@ -20,7 +20,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function TemporaryDrawer() {
+export default function TemporaryDrawer(props) {
   const classes = useStyles();
   const [state, setState] = React.useState({
     left: false,
@@ -48,7 +48,7 @@ export default function TemporaryDrawer() {
       onKeyDown={toggleDrawer(anchor, false)}
     >
       <List>
-        <ListItem button key={"My Assets"}>
+        <ListItem button key={"My Assets"} onClick={handleAssetChange}>
           <ListItemIcon>
             <AccountBalanceWalletIcon />
           </ListItemIcon>
@@ -56,7 +56,7 @@ export default function TemporaryDrawer() {
             <ListItemText primary={"My Assets"} />
           </div>
         </ListItem>
-        <ListItem button key={"Investment Analysis"}>
+        <ListItem button key={"Investment Analysis"} onClick={handleAnalysisChange}>
           <ListItemIcon>
             <AttachMoneyIcon />
           </ListItemIcon>
@@ -67,6 +67,14 @@ export default function TemporaryDrawer() {
       </List>
     </div>
   );
+
+  const handleAnalysisChange = (e) => {
+    props.changeAnalysis();
+  };
+
+  const handleAssetChange = (e) => {
+    props.changeAsset();
+  };
 
   return (
     <div>

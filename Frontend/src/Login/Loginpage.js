@@ -2,9 +2,9 @@ import React, { Component } from "react";
 import "./LoginStyle.scss";
 import { Login } from "./Login";
 import { Register } from "./Register";
-import "./App.css";
-import { Asset } from "./Asset.js";
+import "../App.css";
 import { Redirect } from "react-router-dom";
+import { MainPage } from "../MainPage";
 
 export class LoginPage extends Component {
   constructor(props) {
@@ -52,7 +52,7 @@ export class LoginPage extends Component {
       return (
         <div>
           <Redirect to="./Asset" />
-          <Asset />
+          <MainPage name={this.state.username} />
         </div>
       );
     }

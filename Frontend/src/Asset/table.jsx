@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -26,7 +26,7 @@ const rows = [
   createData("DBS Savings Account", 0.1, 10000),
 ];
 
-export default function SimpleTable() {
+export default function SimpleTable(props) {
   const classes = useStyles();
 
   return (
@@ -37,6 +37,7 @@ export default function SimpleTable() {
             <TableCell>Asset Name</TableCell>
             <TableCell align="right">Interest Rate (%)</TableCell>
             <TableCell align="right">Current Value ($)</TableCell>
+            <TableCell align="right"></TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -44,12 +45,14 @@ export default function SimpleTable() {
             <TableRow key={row.name}>
               <TableCell component="th" scope="row">
                 {row.name}
+              </TableCell>
+              <TableCell align="right">{row.interest}</TableCell>
+              <TableCell align="right">{row.amount}</TableCell>
+              <TableCell align="right">
                 <IconButton aria-label="delete" className={classes.margin}>
                   <DeleteIcon />
                 </IconButton>
               </TableCell>
-              <TableCell align="right">{row.interest}</TableCell>
-              <TableCell align="right">{row.amount}</TableCell>
             </TableRow>
           ))}
         </TableBody>

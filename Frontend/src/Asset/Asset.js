@@ -2,8 +2,8 @@ import React, { Component } from "react";
 import { Grid } from "@material-ui/core";
 import Table from "./table.jsx";
 import Form from "./form.jsx";
-import Button from "@material-ui/core/Button";
 import Analysis from "../Analysis/Analysis";
+import Graph from "./graph";
 
 export class Asset extends Component {
   constructor(props) {
@@ -11,15 +11,23 @@ export class Asset extends Component {
     this.state = {
       analysisOpen: false,
       assetOpen: true,
+      currentData: {
+        assetName: "",
+        interestRate: 0,
+        currentValue: 0,
+      },
+      data: [],
     };
-    this.changeState = this.changeState.bind(this);
-  }
-  createData(name, interest, amount) {
-    return { name, interest, amount };
+
+    this.addAsset = this.addAsset.bind(this);
   }
 
   changeState(newState) {
     this.setState({ analysisOpen: newState, assetOpen: !newState });
+  }
+
+  addAsset(newAsset) {
+    this.setState({ data: [...this.state.data, newAsset] });
   }
 
   render() {
@@ -31,25 +39,17 @@ export class Asset extends Component {
 
     return (
       <Grid container direction="column">
+        <Graph />
         <br />
         <br />
         <Grid item container>
-          <Grid item sm={3}></Grid>
-          <Grid item sm={6} xs={12}>
-            <Form />
+          <Grid item sm={2}></Grid>
+          <Grid item sm={8} xs={12}>
+            <Form onChange={this.addAsset} />
           </Grid>
-          <Grid item sm={3}></Grid>
-
-          <Grid item sm={5}></Grid>
-          <Grid item sm={2} xs={12}>
-            <Button variant="contained" color="primary">
-              Add this asset
-            </Button>
-          </Grid>
-          <Grid item sm={5}></Grid>
+          <Grid item sm={2}></Grid>
           <br />
           <br />
-
           <Grid item sm={1}></Grid>
           <Grid item sm={10} xs={12}>
             <Table />

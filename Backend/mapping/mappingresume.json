@@ -1,0 +1,11 @@
+{
+  "properties": {
+    "name": {
+      "properties": {
+        "last": {
+          "type": "text"
+        }
+      }
+    }
+  }
+}

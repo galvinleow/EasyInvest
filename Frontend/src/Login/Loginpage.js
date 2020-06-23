@@ -14,13 +14,14 @@ export class LoginPage extends Component {
       RegisterOpen: false,
       ProfileOpen: false,
       username: "",
+      password: "",
       users: [],
     };
 
     this.showRegister = this.showRegister.bind(this);
     this.showLogin = this.showLogin.bind(this);
     this.changeState = this.changeState.bind(this);
-    this.setName = this.setName.bind(this);
+    this.handleClick = this.handleClick.bind(this);
     this.updateUser = this.updateUser.bind(this);
   }
 
@@ -35,8 +36,10 @@ export class LoginPage extends Component {
     this.setState({ profileOpen: newState });
   }
 
-  setName(name) {
+  //where you can find the finalised username and password
+  handleClick(name, password) {
     this.setState({ username: name });
+    console.log(name, password);
   }
 
   showRegister() {
@@ -89,7 +92,7 @@ export class LoginPage extends Component {
             <Login
               profileOpen={this.state.ProfileOpen}
               onChange={this.changeState}
-              name={this.setName}
+              handleClick={this.handleClick}
               users={this.state.users}
             />
           )}

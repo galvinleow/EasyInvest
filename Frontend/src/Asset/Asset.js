@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { Grid } from "@material-ui/core";
 import Table from "./table.jsx";
-import Form from "./form.jsx";
 import Analysis from "../Analysis/Analysis";
 import Graph from "./graph";
 
@@ -11,23 +10,23 @@ export class Asset extends Component {
     this.state = {
       analysisOpen: false,
       assetOpen: true,
-      currentData: {
-        assetName: "",
-        interestRate: 0,
-        currentValue: 0,
-      },
+      // currentData: {
+      //   assetName: "",
+      //   interestRate: 0,
+      //   currentValue: 0,
+      // },
       data: [],
     };
-
-    this.addAsset = this.addAsset.bind(this);
+    this.changeState = this.changeState.bind(this);
   }
 
   changeState(newState) {
     this.setState({ analysisOpen: newState, assetOpen: !newState });
   }
 
-  addAsset(newAsset) {
-    this.setState({ data: [...this.state.data, newAsset] });
+
+  handleChange(data) {
+    console.log(data);
   }
 
   render() {
@@ -39,22 +38,18 @@ export class Asset extends Component {
 
     return (
       <Grid container direction="column">
-        <Graph />
-        <br />
-        <br />
         <Grid item container>
-          <Grid item sm={2}></Grid>
-          <Grid item sm={8} xs={12}>
-            <Form onChange={this.addAsset} />
+          <Grid item md={1} ></Grid>
+          <Grid item md={10} sm={12}>
+            {" "}
+            <Graph />
           </Grid>
-          <Grid item sm={2}></Grid>
-          <br />
-          <br />
-          <Grid item sm={1}></Grid>
-          <Grid item sm={10} xs={12}>
+          <Grid item md={1}></Grid>
+          <Grid item md={3} sm={1}></Grid>
+          <Grid item md={6} sm={10} xs = {12}>
             <Table />
           </Grid>
-          <Grid item sm={1}></Grid>
+          <Grid item md={3} sm={1}></Grid>
         </Grid>
       </Grid>
     );

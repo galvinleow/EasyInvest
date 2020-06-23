@@ -15,19 +15,19 @@ export class MainPage extends Component {
     this.changeAnalysis = this.changeAnalysis.bind(this);
   }
 
-  changeAsset(){
-      this.setState({
-        assetOpen: true,
-        analysisOpen: false,
-      })
+  changeAsset() {
+    this.setState({
+      assetOpen: true,
+      analysisOpen: false,
+    });
   }
 
-  changeAnalysis(){
+  changeAnalysis() {
     this.setState({
       assetOpen: false,
       analysisOpen: true,
-    })
-}
+    });
+  }
 
   render() {
     return (

@@ -13,7 +13,7 @@ class Graph extends Component {
           {
             label: "OCBC",
             data: [500, 1000, 1700, 2000, 2500, 3000],
-            backgroundColor: "cornflowerblue",
+            backgroundColor: "royalblue",
           },
           {
             label: "DBS",
@@ -42,7 +42,7 @@ class Graph extends Component {
               position: "right",
             },
           }}
-          height = "90"
+          height = "120"
           width = "450"
         />
       </div>

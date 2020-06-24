@@ -42,7 +42,7 @@ def delete_indices():
     return esMethod.delete_indice(client=es, index=index)
 
 
-# Insert data for input json into indices, must be in a list ?index={value}
+# Insert data for input json into indices, single entry json ?index={value}
 @app.route('/createUser', methods=['POST'])
 def create_user():
     json_data = request.json
@@ -61,43 +61,41 @@ def match_all_from_indices():
 def get_data_from_uuid():
     index = request.args.get("index")
     uuid = request.args.get("uuid")
-    return es.get(index=index, doc_type="_doc", id=uuid)["_source"]
+    try:
+        return es.get(index=index, doc_type="_doc", id=uuid)["_source"]
+    except:
+        return ("Error - No data found")
 
-
-@app.route('/initAsset', methods=['POST'])
-def init_asset():
-    uuid = request.args.get("uuid")
-    json_data = request.json
-    return esMethod.create_with_uuid(client=es, index="asset", json_data=json_data,uuid=uuid)
-
+# Insert asset into database, ?uuid={value} with json body
 @app.route('/addAsset', methods=['POST'])
 def add_asset():
     uuid = request.args.get("uuid")
     json_data = request.json
     return esMethod.add_asset(client=es, index="asset", json_data=json_data,uuid=uuid)
 
+# Insert asset from database, ?uuid={value} with json body
 @app.route('/deleteAsset', methods=['POST'])
 def delete_asset():
     uuid = request.args.get("uuid")
     json_data = request.json
     return esMethod.delete_asset(client=es, index="asset", json_data=json_data,uuid=uuid)
 
-@app.route('/calculateProjected', methods=['GET'])
-def calculate_projected():
-    uuid = request.args.get("uuid")
-    requested_asset = request.args.get("asset")
-    asset_list = es.get(index="asset", doc_type="_doc", id=uuid)["_source"]["asset"]
-    projected_list = []
-    for asset in asset_list:
-        if asset["name"] == requested_asset:
-            rate = float(asset["rate"])
-            amount = float(asset["amount"])
-            for x in range (1, 13):
-                projected = amount * pow((1 +  ((rate / 100) / 12)), 12 * (x/12))
-                print(projected)
+# @app.route('/calculateProjected', methods=['GET'])
+# def calculate_projected():
+#     uuid = request.args.get("uuid")
+#     requested_asset = request.args.get("asset")
+#     asset_list = es.get(index="asset", doc_type="_doc", id=uuid)["_source"]["asset"]
+#     projected_list = []
+#     for asset in asset_list:
+#         if asset["name"] == requested_asset:
+#             rate = float(asset["rate"])
+#             amount = float(asset["amount"])
+#             for x in range (1, 13):
+#                 projected = amount * pow((1 +  ((rate / 100) / 12)), 12 * (x/12))
+#                 print(projected)
             
             
-    return "ok"
+#     return "ok"
 
 
 

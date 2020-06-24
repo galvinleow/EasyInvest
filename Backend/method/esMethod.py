@@ -25,16 +25,10 @@ def delete_indice(client, index):
             return "Error - Indices does not exisit: [" + index + "]"
 
 
-# Index jsonArray without defining UUID, must be in a list
+# Index single entry json without defining UUID, must be in a list
 def create_without_uuid(client, index, json_data):
-    for element in json_data:
-        client.index(index=index, doc_type="_doc", body=element, refresh=True)
+    client.index(index=index, doc_type="_doc", body=json_data, refresh=True)
     return "Index jsonArray for Indices: [" + index + "]"
-
-# Index jsonArray with defining UUID
-def create_with_uuid(client, index, json_data, uuid):
-    client.index(index=index, doc_type="_doc",id=uuid, body=json_data, refresh=True)
-    return "Index jsonArray using UUID for Indices: [" + index + "] & [" + uuid + "]"
 
 
 # Get all data from indices
@@ -59,17 +53,24 @@ def match_all_from_indices(client, index):
     except:
         raise Exception('Error - SearchError: Invalid Syntax / Indices')
 
+# Index single entry json with defining UUID
+def create_with_uuid(client, index, json_data, uuid):
+    client.index(index=index, doc_type="_doc",id=uuid, body=json_data, refresh=True)
+    return "Index jsonArray using UUID for Indices: [" + index + "] & [" + uuid + "]"
+
 # Add asset to existing user with asset by using the UUID
 def add_asset(client, index, json_data, uuid):
-        # Get the doc that store the asset data using UUID
-        data = client.get(index=index, doc_type="_doc", id=uuid)["_source"]
-        # Get the asset list
-        asset_list = data["asset"]
-        # Get the list that is needed to insert
-        to_insert = json_data["asset"]
+    s = Search().using(client).index(index).query("match", _id=uuid)
+    response = s.execute()
+    if len(response.hits) > 0:
+        # Should only be 1 result cause search by UUID
+        for hit in response.hits:
+            # Get the asset list
+            asset_list = hit.to_dict()["asset"]
 
-        # Add the asset to be stored in new list
+        to_insert = json_data["asset"]
         for element in to_insert:
+            # Add the asset to be stored in new list
             asset_list.append(element)
         
         doc_update = {
@@ -78,7 +79,10 @@ def add_asset(client, index, json_data, uuid):
         }
         doc_update['doc']['asset'] = asset_list
         client.update(index=index, doc_type='_doc', id=uuid, body=doc_update, refresh=True)
-        return "Asset Added with UUID tag: [" + index + "] & [" + uuid + "]"
+        return "Added Asset with UUID tag: [" + index + "] & [" + uuid + "]"
+    else:
+        create_with_uuid(client, index, json_data, uuid)
+        return "Created and Added Asset with UUID tag: [" + index + "] & [" + uuid + "]"
 
 # Delete asset to existing user with asset by using the UUID
 def delete_asset(client, index, json_data, uuid):
@@ -86,13 +90,15 @@ def delete_asset(client, index, json_data, uuid):
         data = client.get(index=index, doc_type="_doc", id=uuid)["_source"]
         # Get the asset list
         asset_list = data["asset"]
-        # Get the list that is needed to insert
+
         to_delete = json_data["asset"]
 
-        # Add the asset to be stored in new list
+        # Delete asset
         for element in to_delete:
             if asset_list.count(element) > 0:
                 asset_list.remove(element)
+            else:
+                return "Error - Fail Delete Asset UUID (Asset does not exist): [" + index + "] index of UUID [" + uuid + "]"
         
         doc_update = {
             "doc": {

@@ -1,4 +1,6 @@
 # Initializing elasticseach
+from datetime import *
+
 from elasticsearch import Elasticsearch
 
 from method import esMethod
@@ -39,7 +41,7 @@ def create_indices():
 @app.route("/deleteIndices", methods=["POST"])
 def delete_indices():
     index = request.args.get("index")
-    return esMethod.delete_indice(client=es, index=index)
+    return esMethod.delete_indices(client=es, index=index)
 
 
 # Insert data for input json into indices, single entry json ?index={value}
@@ -66,22 +68,42 @@ def get_data_from_uuid():
     except:
         return ("Error - No data found")
 
+
+##################################### LOGIC IS CORRECT UP TILL HERE #######################################################
+
 # Insert asset into database, ?uuid={value} with json body
 @app.route('/addAsset', methods=['POST'])
 def add_asset():
-    uuid = request.args.get("uuid")
+    user_uuid = request.args.get("user_uuid")
     json_data = request.json
-    return esMethod.add_asset(client=es, index="asset", json_data=json_data,uuid=uuid)
+    return esMethod.add_asset(client=es, index="asset", json_data=json_data, user_uuid=user_uuid)
+
 
 # Insert asset from database, ?uuid={value} with json body
 @app.route('/deleteAsset', methods=['POST'])
 def delete_asset():
     uuid = request.args.get("uuid")
     json_data = request.json
-    return esMethod.delete_asset(client=es, index="asset", json_data=json_data,uuid=uuid)
+    return esMethod.delete_asset(client=es, index="asset", json_data=json_data, uuid=uuid)
 
-# @app.route('/calculateProjected', methods=['GET'])
-# def calculate_projected():
+
+# Update asset from database, ?uuid={value} with json body
+@app.route('/updateAsset', methods=['POST'])
+def update_asset():
+    user_uuid = request.args.get("user_uuid")
+    json_data = request.json
+    return esMethod.update_asset(client=es, index="asset", json_data=json_data, user_uuid=user_uuid)
+
+
+@app.route('/calculateProjected', methods=['GET'])
+def calculate_projected():
+    x = datetime.strptime("03/2020", "%m/%Y")
+    print(x)
+    print(type(x))
+    y = datetime.strptime("03/2020", "%m/%Y")
+    print(x == y)
+
+
 #     uuid = request.args.get("uuid")
 #     requested_asset = request.args.get("asset")
 #     asset_list = es.get(index="asset", doc_type="_doc", id=uuid)["_source"]["asset"]
@@ -92,15 +114,11 @@ def delete_asset():
 #             amount = float(asset["amount"])
 #             for x in range (1, 13):
 #                 projected = amount * pow((1 +  ((rate / 100) / 12)), 12 * (x/12))
-#                 print(projected)
-            
-            
+#                 print(projected) 
 #     return "ok"
 
 
-
-
-# Put mapping for indices with input string index 
+# Put mapping for indices with input string index
 # @app.route("/putMapping", methods=["POST"])
 # def putMapping():
 #     index = request.args.get("index")

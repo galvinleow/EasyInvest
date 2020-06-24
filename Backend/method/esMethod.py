@@ -106,9 +106,9 @@ def add_asset(client, index, json_data, user_uuid):
 
 
 # Delete asset to existing user with asset by using the UUID
-def delete_asset(client, index, json_data, uuid):
+def delete_asset(client, index, json_data, user_uuid):
     # Get the doc that store the asset data using UUID
-    data = client.get(index=index, doc_type="_doc", id=uuid)["_source"]
+    data = client.get(index=index, doc_type="_doc", id=user_uuid)["_source"]
     # Get the asset list
     asset_list = data["asset"]
 
@@ -119,15 +119,15 @@ def delete_asset(client, index, json_data, uuid):
         if asset_list.count(element) > 0:
             asset_list.remove(element)
         else:
-            return "Error - Fail Delete Asset UUID (Asset does not exist): [" + index + "] index of UUID [" + uuid + "]"
+            return "Error - Fail Delete Asset UUID (Asset does not exist): [" + index + "] index of UUID [" + user_uuid + "]"
 
     doc_update = {
         "doc": {
         }
     }
     doc_update['doc']['asset'] = asset_list
-    client.update(index=index, doc_type='_doc', id=uuid, body=doc_update, refresh=True)
-    return "Delete Asset with UUID: [" + index + "] index of UUID [" + uuid + "]"
+    client.update(index=index, doc_type='_doc', id=user_uuid, body=doc_update, refresh=True)
+    return "Delete Asset with UUID: [" + index + "] index of UUID [" + user_uuid + "]"
 
 
 # Update asset, amount field can only be updated with 1 element.
@@ -159,7 +159,6 @@ def update_asset(client, index, json_data, user_uuid):
             # Get the correct element to update
             if element["uuid"] == to_update_uuid:
                 element_amount = element["amount"]
-                # element_amount.sort(key=lambda x: datetime.strptime(x["date"], "%d/%m/%Y").date())
 
                 new_list = []
                 for amount in element_amount:
@@ -187,6 +186,103 @@ def update_asset(client, index, json_data, user_uuid):
         return "Updated Asset with UUID: [" + index + "] index of UUID [" + user_uuid + "]"
     else:
         return "Error - Invalid update as Datetime is out of range"
+
+
+def display_history_data(client, index, user_uuid):
+    try:
+        response = client.get(index=index, doc_type="_doc", id=user_uuid)["_source"]
+    except:
+        return ("Error - No data found")
+
+    asset_list = response["asset"]
+    for asset in asset_list:
+        amount_list = asset["amount"]
+        amount_list.sort(key=lambda element: datetime.strptime(element["date"], "%d/%m/%Y").date())
+        asset["amount"] = display_history_helper(amount_list)
+
+    return response
+
+
+def display_history_helper(amount_list):
+    today = date.today()
+    # Today month/year datetime
+    str_today_month_year = str(today.month) + "/" + str(today.year)
+    today_month_year = datetime.strptime(str_today_month_year, "%m/%Y")
+    # 1 year ago Today month/year datetime
+    one_year_ago = today - timedelta(days=356)
+    str_one_year_ago_month_date = str(one_year_ago.month) + "/" + str(one_year_ago.year)
+    one_year_ago_month_date = datetime.strptime(str_one_year_ago_month_date, "%m/%Y")
+
+    last_item_date = datetime.strptime(amount_list[len(amount_list) - 1]['date'], "%d/%m/%Y").date()
+
+    result = []
+    if convert_full_date_to_month_year(last_item_date) < one_year_ago_month_date:
+        month = one_year_ago_month_date.month
+        year = one_year_ago_month_date.year
+        value = amount_list[len(amount_list) - 1]["value"]
+        for i in range(0, 12):
+            curr = "01/" + month + "/" + year
+            json = {
+                "value ": value,
+                "date": curr
+            }
+            result.append(json)
+            if month == 12:
+                month = 1
+                year = year + 1
+            else:
+                month = month + 1
+        return result
+    else:
+        position_arr = 0
+        element = amount_list[position_arr]
+        position_date = one_year_ago_month_date
+        value = "0"
+        for i in range(0, 12):
+            element_date = datetime.strptime(element["date"], "%d/%m/%Y").date()
+            element_date_month_year = convert_full_date_to_month_year(element_date)
+            if position_date < element_date_month_year:
+                json = {
+                    "date": datetime.strftime(position_date, "%d/%m/%Y"),
+                    "value ": value
+                }
+                result.append(json)
+                next_period = get_days_in_a_month(position_date.month, position_date.year)
+                position_date = position_date + timedelta(days=next_period)
+            elif position_date == element_date_month_year:
+                result.append(element)
+                value = element["value"]
+                position_arr = position_arr + 1
+                if position_arr < len(amount_list):
+                    element = amount_list[position_arr]
+                next_period = get_days_in_a_month(position_date.month, position_date.year)
+                position_date = position_date + timedelta(days=next_period)
+            else:
+                json = {
+                    "date": datetime.strftime(position_date, "%d/%m/%Y"),
+                    "value ": value
+                }
+                result.append(json)
+                next_period = get_days_in_a_month(position_date.month, position_date.year)
+                position_date = position_date + timedelta(days=next_period)
+
+    return result
+
+
+def get_days_in_a_month(month, year):
+    if month == 9 or month == 4 or month == 6 or month == 11:  # 30 day months
+        return 30
+    elif month == 2 and year % 4 == 0:  # leap year
+        return 29
+    elif month == 2:
+        return 28
+    else:
+        return 31
+
+
+def convert_full_date_to_month_year(date):
+    str_month_year = str(date.month) + "/" + str(date.year)
+    return datetime.strptime(str_month_year, "%m/%Y")
 
 # Put mapping for indices
 # def addMapping(client, indices, mapping):

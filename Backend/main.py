@@ -1,5 +1,4 @@
 # Initializing elasticseach
-from datetime import *
 
 from elasticsearch import Elasticsearch
 
@@ -14,6 +13,25 @@ from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app)
+
+# Create Database Indices upon first app launch
+try:
+    es.indices.create('user')
+    print("[user] indices created")
+except:
+    if es.indices.exists('user'):
+        print("[user] mapping already exists")
+    else:
+        print("Error - Failed to create indices")
+
+try:
+    es.indices.create('asset')
+    print("[asset] indices created")
+except:
+    if es.indices.exists('asset'):
+        print("[asset] mapping already exists")
+    else:
+        print("Error - Failed to create indices")
 
 
 # Read file from path with filename and return string
@@ -69,8 +87,6 @@ def get_data_from_uuid():
         return ("Error - No data found")
 
 
-##################################### LOGIC IS CORRECT UP TILL HERE #######################################################
-
 # Insert asset into database, ?uuid={value} with json body
 @app.route('/addAsset', methods=['POST'])
 def add_asset():
@@ -82,9 +98,9 @@ def add_asset():
 # Insert asset from database, ?uuid={value} with json body
 @app.route('/deleteAsset', methods=['POST'])
 def delete_asset():
-    uuid = request.args.get("uuid")
+    user_uuid = request.args.get("user_uuid")
     json_data = request.json
-    return esMethod.delete_asset(client=es, index="asset", json_data=json_data, uuid=uuid)
+    return esMethod.delete_asset(client=es, index="asset", json_data=json_data, uuid=user_uuid)
 
 
 # Update asset from database, ?uuid={value} with json body
@@ -95,15 +111,14 @@ def update_asset():
     return esMethod.update_asset(client=es, index="asset", json_data=json_data, user_uuid=user_uuid)
 
 
-@app.route('/calculateProjected', methods=['GET'])
-def calculate_projected():
-    x = datetime.strptime("03/2020", "%m/%Y")
-    print(x)
-    print(type(x))
-    y = datetime.strptime("03/2020", "%m/%Y")
-    print(x == y)
+@app.route('/displayHistoryData', methods=['GET'])
+def display_history_data():
+    user_uuid = request.args.get("user_uuid")
+    return esMethod.display_history_data(client=es, index="asset", user_uuid=user_uuid)
 
 
+# @app.route('/calculateProjected', methods=['GET'])
+# def calculate_projected():
 #     uuid = request.args.get("uuid")
 #     requested_asset = request.args.get("asset")
 #     asset_list = es.get(index="asset", doc_type="_doc", id=uuid)["_source"]["asset"]

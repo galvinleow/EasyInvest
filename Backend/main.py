@@ -49,16 +49,16 @@ def start_up():
 
 
 # Create indices with input string index, ?index={value}
-@app.route("/createIndices", methods=["POST"])
-def create_indices():
-    index = request.args.get("index")
+@app.route("/createIndices/<index>", methods=["POST"])
+def create_indices(index):
+    # index = request.args.get("index")
     return esMethod.create_new_indices(client=es, index=index)
 
 
 # Delete indices with input string index, ?index={value}
-@app.route("/deleteIndices", methods=["POST"])
-def delete_indices():
-    index = request.args.get("index")
+@app.route("/deleteIndices/<index>", methods=["POST"])
+def delete_indices(index):
+    # index = request.args.get("index")
     return esMethod.delete_indices(client=es, index=index)
 
 
@@ -70,65 +70,60 @@ def create_user():
 
 
 # Get all data from indices
-@app.route('/getAllFromIndices', methods=['GET'])
-def match_all_from_indices():
-    index = request.args.get("index")
+@app.route('/getAllFromIndices/<index>', methods=['GET'])
+def match_all_from_indices(index):
+    # index = request.args.get("index")
     return jsonify(esMethod.match_all_from_indices(client=es, index=index))
 
 
 # Get all data using UUID
-@app.route('/getDataFromUUID', methods=['GET'])
-def get_data_from_uuid():
-    index = request.args.get("index")
-    uuid = request.args.get("uuid")
+@app.route('/getDataFromUUID/<index>/<uuid>', methods=['GET'])
+def get_data_from_uuid(index, uuid):
+    # index = request.args.get("index")
+    # uuid = request.args.get("uuid")
     try:
         return es.get(index=index, doc_type="_doc", id=uuid)["_source"]
     except:
         return ("Error - No data found")
 
 
-# Insert asset into database, ?uuid={value} with json body
-@app.route('/addAsset', methods=['POST'])
-def add_asset():
-    user_uuid = request.args.get("user_uuid")
+# Insert asset into database, with json body
+@app.route('/addAsset/<user_uuid>', methods=['POST'])
+def add_asset(user_uuid):
+    # user_uuid = request.args.get("user_uuid")
     json_data = request.json
     return esMethod.add_asset(client=es, index="asset", json_data=json_data, user_uuid=user_uuid)
 
 
-# Insert asset from database, ?uuid={value} with json body
-@app.route('/deleteAsset', methods=['POST'])
-def delete_asset():
-    user_uuid = request.args.get("user_uuid")
+# Insert asset from database, with json body
+@app.route('/deleteAsset/<user_uuid>', methods=['POST'])
+def delete_asset(user_uuid):
+    # user_uuid = request.args.get("user_uuid")
     json_data = request.json
-    return esMethod.delete_asset(client=es, index="asset", json_data=json_data, uuid=user_uuid)
+    return esMethod.delete_asset(client=es, index="asset", json_data=json_data, user_uuid=user_uuid)
 
 
-# Update asset from database, ?uuid={value} with json body
-@app.route('/updateAsset', methods=['POST'])
-def update_asset():
-    user_uuid = request.args.get("user_uuid")
+# Update asset from database, with json body
+@app.route('/updateAsset/<user_uuid>', methods=['POST'])
+def update_asset(user_uuid):
+    # user_uuid = request.args.get("user_uuid")
     json_data = request.json
     return esMethod.update_asset(client=es, index="asset", json_data=json_data, user_uuid=user_uuid)
 
 
-@app.route('/displayHistoryData', methods=['GET'])
-def display_history_data():
-    user_uuid = request.args.get("user_uuid")
+# Retrieve 1 year of history, does not update in database
+@app.route('/displayHistoryData/<user_uuid>', methods=['GET'])
+def display_history_data(user_uuid):
+    # user_uuid = request.args.get("user_uuid")
     return esMethod.display_history_data(client=es, index="asset", user_uuid=user_uuid)
 
 
-@app.route('/calculateProjected', methods=['GET'])
-def calculate_projected():
-    user_uuid = request.args.get("user_uuid")
+# Retrieve 1 year of history and 4 year of project value
+@app.route('/calculateProjected/<user_uuid>', methods=['GET'])
+def calculate_projected(user_uuid):
+    # user_uuid = request.args.get("user_uuid")
     return esMethod.calculate_projected(client=es, user_uuid=user_uuid)
 
-
-# Put mapping for indices with input string index
-# @app.route("/putMapping", methods=["POST"])
-# def putMapping():
-#     index = request.args.get("index")
-#     mapping = openFile("mapping/mapping" + index + ".json")
-#     return esMethod.addMapping(es, index, json.dumps(mapping))
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5200)

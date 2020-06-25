@@ -154,6 +154,7 @@ def update_asset(client, index, json_data, user_uuid):
     to_update_amount_date = datetime.strptime(to_update_amount["date"], "%d/%m/%Y").date()
     str_update_date_month_year = str(to_update_amount_date.month) + "/" + str(to_update_amount_date.year)
     to_update_amount_date_month_year = datetime.strptime(str_update_date_month_year, "%m/%Y")
+
     # Check if within 1 year from today
     if today_minus1year_month_year <= to_update_amount_date_month_year <= today_month_year:
         for element in asset_list:
@@ -162,22 +163,30 @@ def update_asset(client, index, json_data, user_uuid):
                 element_amount = element["amount"]
 
                 new_list = []
-                for amount in element_amount:
-                    # Get datetime in database to compare with today datetime
-                    amount_date = datetime.strptime(amount["date"], "%d/%m/%Y").date()
-                    str_date_month_year = str(amount_date.month) + "/" + str(amount_date.year)
-                    date_month_year = datetime.strptime(str_date_month_year, "%m/%Y")
-                    print(date_month_year)
+                while len(to_update["amount"]) > 0:
+                    for amount in element_amount:
+                        # Get datetime in database to compare with today datetime
+                        amount_date = datetime.strptime(amount["date"], "%d/%m/%Y").date()
+                        str_date_month_year = str(amount_date.month) + "/" + str(amount_date.year)
+                        date_month_year = datetime.strptime(str_date_month_year, "%m/%Y")
 
-                    if today_minus1year_month_year <= date_month_year <= today_month_year:
-                        if date_month_year == to_update_amount_date_month_year:
-                            new_list.append(to_update["amount"][0])
+                        if today_minus1year_month_year <= date_month_year <= today_month_year:
+                            if date_month_year == to_update_amount_date_month_year:
+                                new_list.append(to_update["amount"][0])
+                                to_update["amount"].pop()
+                            else:
+                                new_list.append(amount)
                         else:
-                            new_list.append(amount)
-                    else:
-                        print("Error - Invalid update as Datetime is out of range")
+                            print("Error - Invalid update as Datetime is out of range")
 
-        element["amount"] = new_list
+                    if len(to_update["amount"]) > 0:
+                        for item in to_update["amount"]:
+                            new_list.append(item)
+                            to_update["amount"].pop()
+                to_update["amount"] = new_list
+                asset_list.remove(element)
+                asset_list.append(json_data["asset"][0])
+
         doc_update = {
             "doc": {
             }
@@ -189,6 +198,7 @@ def update_asset(client, index, json_data, user_uuid):
         return "Error - Invalid update as Datetime is out of range"
 
 
+# Get 1 year of history, does not update database
 def display_history_data(client, index, user_uuid):
     try:
         response = client.get(index=index, doc_type="_doc", id=user_uuid)["_source"]
@@ -286,6 +296,7 @@ def convert_full_date_to_month_year(date):
     return datetime.strptime(str_month_year, "%m/%Y")
 
 
+# Get 1 year of history and 4 years of projected value, does not update database
 def calculate_projected(client, user_uuid):
     history_data = display_history_data(client=client, index="asset", user_uuid=user_uuid)
     asset_list = history_data["asset"]
@@ -311,20 +322,3 @@ def calculate_projected(client, user_uuid):
         result = list(chain(amount_list, project_list))
         asset["amount"] = result
     return history_data
-
-# Put mapping for indices
-# def addMapping(client, indices, mapping):
-#     try:
-#         print(indices)
-#         print(type(mapping))
-#         resp=client.indices.put.mapping(
-#             index=indices,
-#             body=mapping,
-#         )
-#         print(resp)
-#         return "[" + indices + "] mapping done"
-#     except:
-#         if client.indices.exists(indices):
-#             return "Fail to put mapping at [" + indices + "] indices"
-#         else: 
-#             return "[" + indices + "] does not exist"

@@ -1,5 +1,6 @@
 import uuid
 from datetime import *
+from itertools import chain
 
 from elasticsearch_dsl import Search
 
@@ -223,7 +224,7 @@ def display_history_helper(amount_list):
         for i in range(0, 12):
             curr = "01/" + month + "/" + year
             json = {
-                "value ": value,
+                "value": value,
                 "date": curr
             }
             result.append(json)
@@ -244,7 +245,7 @@ def display_history_helper(amount_list):
             if position_date < element_date_month_year:
                 json = {
                     "date": datetime.strftime(position_date, "%d/%m/%Y"),
-                    "value ": value
+                    "value": value
                 }
                 result.append(json)
                 next_period = get_days_in_a_month(position_date.month, position_date.year)
@@ -260,7 +261,7 @@ def display_history_helper(amount_list):
             else:
                 json = {
                     "date": datetime.strftime(position_date, "%d/%m/%Y"),
-                    "value ": value
+                    "value": value
                 }
                 result.append(json)
                 next_period = get_days_in_a_month(position_date.month, position_date.year)
@@ -283,6 +284,33 @@ def get_days_in_a_month(month, year):
 def convert_full_date_to_month_year(date):
     str_month_year = str(date.month) + "/" + str(date.year)
     return datetime.strptime(str_month_year, "%m/%Y")
+
+
+def calculate_projected(client, user_uuid):
+    history_data = display_history_data(client=client, index="asset", user_uuid=user_uuid)
+    asset_list = history_data["asset"]
+    for asset in asset_list:
+        amount_list = asset["amount"]
+        amount_list.sort(key=lambda element: datetime.strptime(element["date"], "%d/%m/%Y").date())
+        latest = amount_list[len(amount_list) - 1]
+        curr = convert_full_date_to_month_year(datetime.strptime(latest["date"], "%d/%m/%Y").date())
+        four_year_later = curr + timedelta(days=365 * 4)
+        project_list = []
+        period = 1
+        while curr <= four_year_later:
+            days_to_add = get_days_in_a_month(curr.month, curr.year)
+            curr = curr + timedelta(days_to_add)
+            value = format(float(latest["value"]) * pow((1 + ((float(asset["rate"]) / 100) / 12)), 12 * (period / 12)),
+                           '.2f')
+            json = {
+                "date": datetime.strftime(curr, "%d/%m/%Y"),
+                "value": value
+            }
+            project_list.append(json)
+            period = period + 1
+        result = list(chain(amount_list, project_list))
+        asset["amount"] = result
+    return history_data
 
 # Put mapping for indices
 # def addMapping(client, indices, mapping):

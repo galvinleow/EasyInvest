@@ -117,20 +117,10 @@ def display_history_data():
     return esMethod.display_history_data(client=es, index="asset", user_uuid=user_uuid)
 
 
-# @app.route('/calculateProjected', methods=['GET'])
-# def calculate_projected():
-#     uuid = request.args.get("uuid")
-#     requested_asset = request.args.get("asset")
-#     asset_list = es.get(index="asset", doc_type="_doc", id=uuid)["_source"]["asset"]
-#     projected_list = []
-#     for asset in asset_list:
-#         if asset["name"] == requested_asset:
-#             rate = float(asset["rate"])
-#             amount = float(asset["amount"])
-#             for x in range (1, 13):
-#                 projected = amount * pow((1 +  ((rate / 100) / 12)), 12 * (x/12))
-#                 print(projected) 
-#     return "ok"
+@app.route('/calculateProjected', methods=['GET'])
+def calculate_projected():
+    user_uuid = request.args.get("user_uuid")
+    return esMethod.calculate_projected(client=es, user_uuid=user_uuid)
 
 
 # Put mapping for indices with input string index

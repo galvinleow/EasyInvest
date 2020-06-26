@@ -101,15 +101,17 @@ def login():
         "username": user_name
     }
     hits = esMethod.search_exact_docs(client=es, index="user", arg_dict=arg_dict)
-    body = hits[0]["body"]
-    to_check_password = body["password"]
-    if bcrypt.check_password_hash(to_check_password, password):
-        access_token = create_access_token(identity={"email": body["email"], "uuid": hits[0]["uuid"]})
-        result = jsonify({"token": access_token})
+    if (len(hits) == 0):
+        return("Error - Username not found")
     else:
-        result = jsonify({"error": " Invalid username and password"})
-
-    return result
+        body = hits[0]["body"]
+        to_check_password = body["password"]
+        if bcrypt.check_password_hash(to_check_password, password):
+            access_token = create_access_token(identity={"email": body["email"], "uuid": hits[0]["uuid"]})
+            result = jsonify({"token": access_token})
+            return result
+        else:
+            return "Error - Invalid username and password"
 
 
 # # Insert data for input json into indices, single entry json ?index={value}

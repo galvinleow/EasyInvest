@@ -77,7 +77,7 @@ def register():
     email = request.get_json()["email"]
     password = bcrypt.generate_password_hash(request.get_json()["password"]).decode("utf-8")
     created = datetime.now()
-    arg_dict = {"username": user_name}
+    arg_dict = {"username": user_name.lower()}
     hit = esMethod.search_exact_docs(client=es, index="user", arg_dict=arg_dict)
     if len(hit) == 0:
         json_data = {
@@ -98,8 +98,9 @@ def login():
     password = request.get_json()["password"]
     result = ""
     arg_dict = {
-        "username": user_name
+        "username": user_name.lower()
     }
+    print(arg_dict)
     hits = esMethod.search_exact_docs(client=es, index="user", arg_dict=arg_dict)
     if (len(hits) == 0):
         return("Error - Username not found")
@@ -111,7 +112,7 @@ def login():
             result = jsonify({"token": access_token})
             return result
         else:
-            return "Error - Invalid username and password"
+            return "Error - Invalid password"
 
 
 # # Insert data for input json into indices, single entry json ?index={value}

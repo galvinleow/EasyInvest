@@ -5,6 +5,8 @@ import Analysis from "../Analysis/Analysis";
 import Graph from "./graph";
 
 export class Asset extends Component {
+
+  
   constructor(props) {
     super(props);
     this.state = {

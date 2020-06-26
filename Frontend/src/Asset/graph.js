@@ -6,13 +6,11 @@ class Graph extends Component {
     super(props);
     this.state = {
       chartData: {
-        labels: [
-          "2020", "2021", "2022", "2023", "2024", "2025"
-        ],
+        labels: ["2020", "2021", "2022", "2023", "2024", "2025"],
         datasets: [
           {
             label: "OCBC",
-            data: [500, 1000, 1700, 2000, 2500, 3000],
+            data: this.getData.amount,
             backgroundColor: "royalblue",
           },
           {
@@ -25,6 +23,20 @@ class Graph extends Component {
     };
   }
 
+  getData() {
+    const requestOptions = {
+      method: "GET",
+      redirect: "follow",
+    };
+
+    fetch(
+      "http://0.0.0.0:5200/calculateProjected/NAAZ73IB8XGqOAw36Ph3",
+      requestOptions
+    )
+      .then((response) => response.text())
+      .then((result) => console.log(result))
+      .catch((error) => console.log("error", error));
+  }
 
   render() {
     return (
@@ -35,15 +47,15 @@ class Graph extends Component {
             title: {
               display: true,
               text: "Projected Accumulated Savings",
-              fontSize: 25
+              fontSize: 25,
             },
             legend: {
               display: true,
               position: "right",
             },
           }}
-          height = "120"
-          width = "450"
+          height="120"
+          width="450"
         />
       </div>
     );

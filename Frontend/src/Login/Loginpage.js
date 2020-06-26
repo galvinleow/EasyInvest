@@ -22,14 +22,29 @@ export class LoginPage extends Component {
     this.showLogin = this.showLogin.bind(this);
     this.changeState = this.changeState.bind(this);
     this.handleClick = this.handleClick.bind(this);
-    this.updateUser = this.updateUser.bind(this);
+    this.handleRegister = this.handleRegister.bind(this);
   }
 
-  updateUser(username, password) {
-    this.setState((prevState) => ({
-      users: [...prevState.users, { username, password }],
-    }));
-    console.log(this.state.users);
+  handleRegister(username, email, password) {
+    const raw = {
+      name: username,
+      email: email,
+    };
+
+    const requestOptions = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(raw),
+      redirect: "follow",
+    };
+
+    fetch("http://0.0.0.0:5200/createUser", requestOptions)
+      .then((response) => response.text())
+      .then((result) => console.log(result))
+      .catch((error) => console.log("error", error));
+
   }
 
   changeState(newState) {
@@ -96,7 +111,7 @@ export class LoginPage extends Component {
               users={this.state.users}
             />
           )}
-          {this.state.RegisterOpen && <Register users={this.updateUser} />}
+          {this.state.RegisterOpen && <Register users={this.handleRegister} />}
         </div>
       </div>
     );

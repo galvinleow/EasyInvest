@@ -18,7 +18,7 @@ export class Register extends Component {
     this.onPasswordChange = this.onPasswordChange.bind(this);
   }
 
-  submitRegister() {
+  submitRegister(e) {
     if (this.state.username === "") {
       this.showWarning("username", "Username cannot be empty!");
     }
@@ -28,6 +28,7 @@ export class Register extends Component {
     if (this.state.password === "") {
       this.showWarning("password", "Password cannot be empty!");
     }
+    this.props.users(this.state.username, this.state.email, this.state.password)
   }
 
   showWarning(element, message) {

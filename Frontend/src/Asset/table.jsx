@@ -18,9 +18,7 @@ import ViewColumn from "@material-ui/icons/ViewColumn";
 export default function MaterialTableDemo(props) {
   const tableIcons = {
     Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
-    Check: forwardRef((props, ref) => (
-      <Check {...props} ref={ref} />
-    )),
+    Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
     Clear: forwardRef((props, ref) => <Clear {...props} ref={ref} />),
     Delete: forwardRef((props, ref) => <DeleteOutline {...props} ref={ref} />),
     DetailPanel: forwardRef((props, ref) => (
@@ -40,6 +38,23 @@ export default function MaterialTableDemo(props) {
     ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
   };
 
+  const getValues = () => {
+    var requestOptions = {
+      method: "GET",
+      redirect: "follow",
+    };
+
+    fetch(
+      "http://0.0.0.0:5200/getDataFromUUID/asset/NAAZ73IB8XGqOAw36Ph3",
+      requestOptions
+    )
+      .then((response) => response.text())
+      .then((result) => console.log(result))
+      .catch((error) => console.log("error", error));
+
+    console.log(getValues);
+  };
+
   const [state, setState] = React.useState({
     columns: [
       { title: "Asset Name", field: "name" },
@@ -50,8 +65,12 @@ export default function MaterialTableDemo(props) {
       },
       { title: "Current Value", field: "value", type: "numeric" },
     ],
-    data: [{ name: "OCBC", interest: 4, value: 10000 }],
+    //to loop through database
+    //data: [{ name: "OCBC", interest: 4, value: 10000 }],
+
   });
+
+  
 
   return (
     <MaterialTable
@@ -78,11 +97,43 @@ export default function MaterialTableDemo(props) {
             setTimeout(() => {
               //need to have a function that disallow a row to be added when one of the fields are empty
               if (!newData.name | !newData.interest | !newData.value) {
-                alert('Fields cannot be empty! Please delete and add again!');
-              } 
+                alert("Fields cannot be empty! Please delete and add again!");
+              }
               resolve();
               //to get added row after clicking add -> save
-              console.log(newData);
+              var raw = {
+                asset: [
+                  {
+                    name: newData.name,
+                    type: "saving",
+                    rate: newData.interest,
+                    amount: [
+                      {
+                        value: newData.value,
+                        date: new Date().toLocaleDateString(),
+                      },
+                    ],
+                  },
+                ],
+              };
+
+              const requestOptions = {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(raw),
+                redirect: "follow",
+              };
+
+              fetch(
+                "http://0.0.0.0:5200/addAsset/NAAZ73IB8XGqOAw36Ph3",
+                requestOptions
+              )
+                .then((response) => response.text())
+                .then((result) => console.log(result))
+                .catch((error) => console.log("error", error));
+
               setState((prevState) => {
                 const data = [...prevState.data];
                 data.push(newData);
@@ -95,6 +146,40 @@ export default function MaterialTableDemo(props) {
             setTimeout(() => {
               resolve();
               //to get edited row after clicking edit -> save
+              const raw = {
+                asset: [
+                  {
+                    amount: [
+                      {
+                        date: new Date().toLocaleDateString(),
+                        value: "1",
+                      },
+                    ],
+                    name: "sc",
+                    rate: "1",
+                    type: "saving",
+                    uuid: "3c575070-b771-11ea-979e-acde48001122",
+                  },
+                ],
+              };
+
+              const requestOptions = {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(raw),
+                redirect: "follow",
+              };
+
+              fetch(
+                "http://0.0.0.0:5200/updateAsset/NAAZ73IB8XGqOAw36Ph3",
+                requestOptions
+              )
+                .then((response) => response.text())
+                .then((result) => console.log(result))
+                .catch((error) => console.log("error", error));
+
               console.log(newData);
               if (oldData) {
                 setState((prevState) => {
@@ -110,7 +195,40 @@ export default function MaterialTableDemo(props) {
             setTimeout(() => {
               resolve();
               //to get deleted row after clicking delete -> save
-              console.log(oldData);
+              var raw = {
+                asset: [
+                  {
+                    amount: [
+                      {
+                        date: "11/03/2020",
+                        value: "100000",
+                      },
+                    ],
+                    name: "DBS",
+                    rate: "5",
+                    type: "saving",
+                    uuid: "bcc33675-b770-11ea-9dc9-acde48001122",
+                  },
+                ],
+              };
+
+              var requestOptions = {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(raw),
+                redirect: "follow",
+              };
+
+              fetch(
+                "http://0.0.0.0:5200/deleteAsset/NAAZ73IB8XGqOAw36Ph3",
+                requestOptions
+              )
+                .then((response) => response.text())
+                .then((result) => console.log(result))
+                .catch((error) => console.log("error", error));
+
               setState((prevState) => {
                 const data = [...prevState.data];
                 data.splice(data.indexOf(oldData), 1);

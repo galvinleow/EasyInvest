@@ -86,9 +86,7 @@ def register():
             "created": created
         }
         json_data.update(arg_dict)
-        return esMethod.create_without_uuid(client=es, index="user", json_data=json_data)
-    else:
-        return "Username already exist"
+        return jsonify({"result": esMethod.create_without_uuid(client=es, index="user", json_data=json_data)})
 
 
 # Login user
@@ -103,7 +101,7 @@ def login():
     print(arg_dict)
     hits = esMethod.search_exact_docs(client=es, index="user", arg_dict=arg_dict)
     if (len(hits) == 0):
-        return("Error - Username not found")
+        return jsonify({"error": "Error - Invalid Username"})
     else:
         body = hits[0]["body"]
         to_check_password = body["password"]
@@ -112,7 +110,7 @@ def login():
             result = jsonify({"token": access_token})
             return result
         else:
-            return "Error - Invalid password"
+            return jsonify({"error": "Error - Invalid password"})
 
 
 # # Insert data for input json into indices, single entry json ?index={value}

@@ -35,20 +35,24 @@ def create_without_uuid(client, index, json_data):
     return "Index jsonArray for Indices: [" + index + "]"
 
 
+def format_response(response):
+    response_list = []
+    for hit in response.hits:
+        hits_dict = {}
+        hit_uuid = hit.meta.id
+        hit_body = hit.to_dict()
+        hits_dict['uuid'] = hit_uuid
+        hits_dict['body'] = hit_body
+        response_list.append(hits_dict)
+    return response_list
+
+
 # Get all data from indices
 def match_all_from_indices(client, index):
     try:
         s = Search()[0:9999].using(client).index(index).query("match_all")
         response = s.execute()
-        response_list = []
-
-        for hit in response.hits:
-            hits_dict = {}
-            hit_uuid = hit.meta.id
-            hit_body = hit.to_dict()
-            hits_dict['uuid'] = hit_uuid
-            hits_dict['body'] = hit_body
-            response_list.append(hits_dict)
+        response_list = format_response(response)
 
         if len(response_list) == 0:
             return "Error - SearchError: No match found"
@@ -322,3 +326,19 @@ def calculate_projected(client, user_uuid):
         result = list(chain(amount_list, project_list))
         asset["amount"] = result
     return history_data
+
+
+def search_exact_docs(client, index, arg_dict):
+    try:
+        s = Search()[0:9999].using(client).index(index).filter('term', **arg_dict)
+        response = s.execute()
+        hits_list = format_response(response)
+
+        if len(hits_list) == 0:
+            print('SearchError: No match found ')
+            return hits_list
+        else:
+            return hits_list
+
+    except:
+        raise Exception('SearchError: Invalid Search')

@@ -3,7 +3,7 @@ import { Grid } from "@material-ui/core";
 import Table from "./table.jsx";
 import Analysis from "../Analysis/Analysis";
 import Graph from "./graph";
-import jwt_decode from 'jwt-decode'
+import jwt_decode from "jwt-decode";
 
 export default function Asset(props) {
   const [state, setState] = useState({
@@ -13,19 +13,16 @@ export default function Asset(props) {
     assets: [],
   });
 
-  const token = localStorage.usertoken
-  const decoded = jwt_decode(token)
-  const uuid = decoded.identity.uuid
-  console.log(uuid) 
+  const token = localStorage.usertoken;
+  const decoded = jwt_decode(token);
+  const uuid = decoded.identity.uuid;
 
   useEffect(() => {
-    fetch(
-      "http://localhost:5200/getDataFromUUID/asset/" + uuid)
-      .then((response) =>
-        response.json()
-      .then((data) => {
-        setState({ assets: data.asset });
-      })
+    fetch("http://0.0.0.0:5200/getDataFromUUID/asset/" + uuid).then(
+      (response) =>
+        response.json().then((data) => {
+          setState({ assets: data.asset });
+        })
     );
   }, []);
 
@@ -44,7 +41,7 @@ export default function Asset(props) {
         <Grid item md={1}></Grid>
         <Grid item md={3} sm={1}></Grid>
         <Grid item md={6} sm={10} xs={12}>
-          <Table assets={state.assets} />
+          <Table assets={state.assets} id={uuid} />
         </Grid>
         <Grid item md={3} sm={1}></Grid>
       </Grid>

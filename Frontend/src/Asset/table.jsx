@@ -16,17 +16,7 @@ import Remove from "@material-ui/icons/Remove";
 import ViewColumn from "@material-ui/icons/ViewColumn";
 
 export default function MaterialTableDemo(props) {
-  function createData(name, interest, value) {
-    return { name, interest, value };
-  }
-
-  function allAssets() {
-    const assets = props.assets.map((asset) =>
-      createData(asset.name, asset.rate, asset.amount.value)
-    );
-    console.log(assets);
-    setState({ data: assets });
-  }
+  const uuid = props.id;
 
   const tableIcons = {
     Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -50,7 +40,19 @@ export default function MaterialTableDemo(props) {
     ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
   };
 
-  const [assets, setAssets] = React.useState([]);
+  const allAssets = props.assets;
+
+  function createData(name, interest, value) {
+    return { name: name, interest: interest, value: value };
+  }
+
+
+  const dataList = allAssets.map((asset) =>
+    createData(asset.name, asset.rate, asset.amount[0].value)
+  );
+  // setState({data: dataList});
+  console.log(dataList);
+
   const [state, setState] = React.useState({
     columns: [
       { title: "Asset Name", field: "name" },
@@ -62,9 +64,7 @@ export default function MaterialTableDemo(props) {
       { title: "Current Value", field: "value", type: "numeric" },
     ],
     //to loop through database
-    data: [
-
-    ],
+    data: dataList,
   });
 
   return (
@@ -121,10 +121,7 @@ export default function MaterialTableDemo(props) {
                 redirect: "follow",
               };
 
-              fetch(
-                "http://0.0.0.0:5200/addAsset/jerY83IB35d_ivospiSm",
-                requestOptions
-              )
+              fetch("http://0.0.0.0:5200/addAsset/" + uuid, requestOptions)
                 .then((response) => response.text())
                 .then((result) => console.log(result))
                 .catch((error) => console.log("error", error));
@@ -167,15 +164,11 @@ export default function MaterialTableDemo(props) {
                 redirect: "follow",
               };
 
-              fetch(
-                "http://0.0.0.0:5200/updateAsset/jerY83IB35d_ivospiSm",
-                requestOptions
-              )
+              fetch("http://0.0.0.0:5200/updateAsset/" + uuid, requestOptions)
                 .then((response) => response.text())
                 .then((result) => console.log(result))
                 .catch((error) => console.log("error", error));
 
-              console.log(newData);
               if (oldData) {
                 setState((prevState) => {
                   const data = [...prevState.data];
@@ -216,10 +209,7 @@ export default function MaterialTableDemo(props) {
                 redirect: "follow",
               };
 
-              fetch(
-                "http://0.0.0.0:5200/deleteAsset/jerY83IB35d_ivospiSm",
-                requestOptions
-              )
+              fetch("http://0.0.0.0:5200/deleteAsset/" + uuid, requestOptions)
                 .then((response) => response.text())
                 .then((result) => console.log(result))
                 .catch((error) => console.log("error", error));

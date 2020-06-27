@@ -16,19 +16,21 @@ export class LoginPage extends Component {
       username: "",
       password: "",
       users: [],
+      errors: "",
     };
 
     this.showRegister = this.showRegister.bind(this);
     this.showLogin = this.showLogin.bind(this);
     this.changeState = this.changeState.bind(this);
-    this.handleClick = this.handleClick.bind(this);
+    this.handleLogin = this.handleLogin.bind(this);
     this.handleRegister = this.handleRegister.bind(this);
   }
 
   handleRegister(username, email, password) {
     const raw = {
-      name: username,
+      username: username,
       email: email,
+      password: password,
     };
 
     const requestOptions = {
@@ -40,21 +42,50 @@ export class LoginPage extends Component {
       redirect: "follow",
     };
 
-    fetch("http://0.0.0.0:5200/createUser", requestOptions)
+    fetch("http://0.0.0.0:5200/register", requestOptions)
       .then((response) => response.text())
-      .then((result) => console.log(result))
+      .then((result) =>
+        result === "Username already exist"
+          ? alert(
+              "User has already been registered. Please login/ choose another username."
+            )
+          : alert(username + " registered!")
+      )
       .catch((error) => console.log("error", error));
-
   }
 
-  changeState(newState) {
-    this.setState({ profileOpen: newState });
+  changeState() {
+    console.log("l");
+    //this.setState({ profileOpen: true });
   }
 
   //where you can find the finalised username and password
-  handleClick(name, password) {
-    this.setState({ username: name });
-    console.log(name, password);
+  handleLogin(name, password) {
+    //this.setState({ username: name });
+    const raw = {
+      username: name,
+      password: password,
+    };
+
+    const requestOptions = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(raw),
+      redirect: "follow",
+    };
+
+    fetch("http://0.0.0.0:5200/login", requestOptions)
+      .then((response) => response.text())
+      .then((result) =>
+        result === "Error - Username not found"
+          ? alert("User is not registered")
+          : result === "Error - Invalid password"
+          ? alert("Invalid password")
+          : this.setState({ ProfileOpen: true })
+      )
+      .catch((error) => console.log("errors", error));
   }
 
   showRegister() {
@@ -66,7 +97,7 @@ export class LoginPage extends Component {
   }
 
   render() {
-    if (this.state.profileOpen) {
+    if (this.state.ProfileOpen) {
       return (
         <div>
           <Redirect to="./Asset" />
@@ -106,8 +137,8 @@ export class LoginPage extends Component {
           {this.state.LoginOpen && (
             <Login
               profileOpen={this.state.ProfileOpen}
-              onChange={this.changeState}
-              handleClick={this.handleClick}
+              // onChange={this.changeState}
+              handleLogin={this.handleLogin}
               users={this.state.users}
             />
           )}

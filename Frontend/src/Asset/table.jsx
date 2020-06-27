@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import MaterialTable from "material-table";
 import { forwardRef } from "react";
 
@@ -16,6 +16,27 @@ import Remove from "@material-ui/icons/Remove";
 import ViewColumn from "@material-ui/icons/ViewColumn";
 
 export default function MaterialTableDemo(props) {
+  //const [assets, setAssets] = useState([]);
+
+  //   useEffect(() => {
+  //     fetch(
+  //       "http://0.0.0.0:5200/getDataFromUUID/asset/jerY83IB35d_ivospiSm"
+  //     ).then((response) =>
+  //       response.json().then((data) => {
+  //         setAssets(data.asset);
+  //       })
+  //     );
+  //   }, []);
+  console.log(props.assets);
+  function createData(name, interest, value) {
+    return { name, interest, value };
+  }
+
+  const assets = props.assets.map((asset) =>
+    createData(asset.name, asset.rate, asset.amount.value)
+  );
+  console.log(assets);
+
   const tableIcons = {
     Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
     Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
@@ -38,23 +59,6 @@ export default function MaterialTableDemo(props) {
     ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
   };
 
-  const getValues = () => {
-    var requestOptions = {
-      method: "GET",
-      redirect: "follow",
-    };
-
-    fetch(
-      "http://0.0.0.0:5200/getDataFromUUID/asset/NAAZ73IB8XGqOAw36Ph3",
-      requestOptions
-    )
-      .then((response) => response.text())
-      .then((result) => console.log(result))
-      .catch((error) => console.log("error", error));
-
-    console.log(getValues);
-  };
-
   const [state, setState] = React.useState({
     columns: [
       { title: "Asset Name", field: "name" },
@@ -66,11 +70,8 @@ export default function MaterialTableDemo(props) {
       { title: "Current Value", field: "value", type: "numeric" },
     ],
     //to loop through database
-    //data: [{ name: "OCBC", interest: 4, value: 10000 }],
-
+    data: [ { 'value':assets.length}]
   });
-
-  
 
   return (
     <MaterialTable
@@ -127,7 +128,7 @@ export default function MaterialTableDemo(props) {
               };
 
               fetch(
-                "http://0.0.0.0:5200/addAsset/NAAZ73IB8XGqOAw36Ph3",
+                "http://0.0.0.0:5200/addAsset/jerY83IB35d_ivospiSm",
                 requestOptions
               )
                 .then((response) => response.text())
@@ -173,7 +174,7 @@ export default function MaterialTableDemo(props) {
               };
 
               fetch(
-                "http://0.0.0.0:5200/updateAsset/NAAZ73IB8XGqOAw36Ph3",
+                "http://0.0.0.0:5200/updateAsset/jerY83IB35d_ivospiSm",
                 requestOptions
               )
                 .then((response) => response.text())
@@ -222,7 +223,7 @@ export default function MaterialTableDemo(props) {
               };
 
               fetch(
-                "http://0.0.0.0:5200/deleteAsset/NAAZ73IB8XGqOAw36Ph3",
+                "http://0.0.0.0:5200/deleteAsset/jerY83IB35d_ivospiSm",
                 requestOptions
               )
                 .then((response) => response.text())

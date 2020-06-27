@@ -15,8 +15,9 @@ export class Login extends Component {
 
 
   submitLogin(e) {
-    this.props.onChange(e.target.value);
-    this.props.handleClick(this.state.username, this.state.password);
+    this.props.handleLogin(this.state.username, this.state.password);
+    //this.props.onChange(e.target.value);
+
   }
 
   onUsernameChange(e) {

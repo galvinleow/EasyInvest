@@ -1,0 +1,14 @@
+
+
+Frontend/node_modules/*.*
+
+*.cmd
+*.ps1
+Frontend/node_modules/jwt-decode/.npmignore
+*.js
+*.html
+*.json
+*.md
+*.yml
+Frontend/node_modules/jwt-decode/LICENSE
+*.node

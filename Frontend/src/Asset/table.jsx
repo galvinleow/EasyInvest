@@ -50,6 +50,7 @@ export default function MaterialTableDemo(props) {
     ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
   };
 
+  const [assets, setAssets] = React.useState([]);
   const [state, setState] = React.useState({
     columns: [
       { title: "Asset Name", field: "name" },
@@ -61,7 +62,9 @@ export default function MaterialTableDemo(props) {
       { title: "Current Value", field: "value", type: "numeric" },
     ],
     //to loop through database
-    data: [],
+    data: [
+
+    ],
   });
 
   return (

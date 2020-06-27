@@ -13,11 +13,8 @@ export class Login extends Component {
     this.onPasswordChange = this.onPasswordChange.bind(this);
   }
 
-
   submitLogin(e) {
     this.props.handleLogin(this.state.username, this.state.password);
-    //this.props.onChange(e.target.value);
-
   }
 
   onUsernameChange(e) {

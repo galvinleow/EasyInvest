@@ -16,26 +16,17 @@ import Remove from "@material-ui/icons/Remove";
 import ViewColumn from "@material-ui/icons/ViewColumn";
 
 export default function MaterialTableDemo(props) {
-  //const [assets, setAssets] = useState([]);
-
-  //   useEffect(() => {
-  //     fetch(
-  //       "http://0.0.0.0:5200/getDataFromUUID/asset/jerY83IB35d_ivospiSm"
-  //     ).then((response) =>
-  //       response.json().then((data) => {
-  //         setAssets(data.asset);
-  //       })
-  //     );
-  //   }, []);
-  console.log(props.assets);
   function createData(name, interest, value) {
     return { name, interest, value };
   }
 
-  const assets = props.assets.map((asset) =>
-    createData(asset.name, asset.rate, asset.amount.value)
-  );
-  console.log(assets);
+  function allAssets() {
+    const assets = props.assets.map((asset) =>
+      createData(asset.name, asset.rate, asset.amount.value)
+    );
+    console.log(assets);
+    setState({ data: assets });
+  }
 
   const tableIcons = {
     Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -70,7 +61,7 @@ export default function MaterialTableDemo(props) {
       { title: "Current Value", field: "value", type: "numeric" },
     ],
     //to loop through database
-    data: [ { 'value':assets.length}]
+    data: [],
   });
 
   return (

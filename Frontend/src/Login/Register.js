@@ -27,8 +27,13 @@ export class Register extends Component {
     }
     if (this.state.password === "") {
       this.showWarning("password", "Password cannot be empty!");
+    } else {
+      this.props.users(
+        this.state.username,
+        this.state.email,
+        this.state.password
+      );
     }
-    this.props.users(this.state.username, this.state.email, this.state.password)
   }
 
   showWarning(element, message) {

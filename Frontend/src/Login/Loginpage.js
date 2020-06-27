@@ -15,13 +15,10 @@ export class LoginPage extends Component {
       ProfileOpen: false,
       username: "",
       password: "",
-      users: [],
-      errors: "",
     };
 
     this.showRegister = this.showRegister.bind(this);
     this.showLogin = this.showLogin.bind(this);
-    this.changeState = this.changeState.bind(this);
     this.handleLogin = this.handleLogin.bind(this);
     this.handleRegister = this.handleRegister.bind(this);
   }
@@ -48,20 +45,15 @@ export class LoginPage extends Component {
         result === "Username already exist"
           ? alert(
               "User has already been registered. Please login/ choose another username."
-            )
+            ) 
           : alert(username + " registered!")
       )
       .catch((error) => console.log("error", error));
   }
 
-  changeState() {
-    console.log("l");
-    //this.setState({ profileOpen: true });
-  }
 
   //where you can find the finalised username and password
   handleLogin(name, password) {
-    //this.setState({ username: name });
     const raw = {
       username: name,
       password: password,
@@ -137,7 +129,6 @@ export class LoginPage extends Component {
           {this.state.LoginOpen && (
             <Login
               profileOpen={this.state.ProfileOpen}
-              // onChange={this.changeState}
               handleLogin={this.handleLogin}
               users={this.state.users}
             />

@@ -46,13 +46,11 @@ export default function MaterialTableDemo(props) {
     return { name: name, interest: interest, value: value };
   }
 
-
   const dataList = allAssets.map((asset) =>
     createData(asset.name, asset.rate, asset.amount[0].value)
   );
   // setState({data: dataList});
-  console.log(dataList);
-
+  
   const [state, setState] = React.useState({
     columns: [
       { title: "Asset Name", field: "name" },
@@ -64,8 +62,11 @@ export default function MaterialTableDemo(props) {
       { title: "Current Value", field: "value", type: "numeric" },
     ],
     //to loop through database
-    data: dataList,
+    data: [{name: "oCBC", interest: 5, value: 6}],
   });
+
+  console.log(dataList)
+  console.log(state.data);
 
   return (
     <MaterialTable

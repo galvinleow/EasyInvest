@@ -3,6 +3,7 @@ import { Grid } from "@material-ui/core";
 import Table from "./table.jsx";
 import Analysis from "../Analysis/Analysis";
 import Graph from "./graph";
+import jwt_decode from 'jwt-decode'
 
 export default function Asset(props) {
   const [state, setState] = useState({
@@ -12,11 +13,17 @@ export default function Asset(props) {
     assets: [],
   });
 
+  const token = localStorage.usertoken
+  const decoded = jwt_decode(token)
+  const uuid = decoded.identity.uuid
+  console.log(uuid) 
+
   useEffect(() => {
     fetch(
-      "http://0.0.0.0:5200/getDataFromUUID/asset/jerY83IB35d_ivospiSm"
-    ).then((response) =>
-      response.json().then((data) => {
+      "http://localhost:5200/getDataFromUUID/asset/" + uuid)
+      .then((response) =>
+        response.json()
+      .then((data) => {
         setState({ assets: data.asset });
       })
     );

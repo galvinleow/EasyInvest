@@ -39,7 +39,7 @@ export class LoginPage extends Component {
       redirect: "follow",
     };
 
-    fetch("http://0.0.0.0:5200/register", requestOptions)
+    fetch("http://localhost:5200/register", requestOptions)
       .then((response) => response.text())
       .then((result) =>
         result === "Username already exist"
@@ -68,15 +68,19 @@ export class LoginPage extends Component {
       redirect: "follow",
     };
 
-    fetch("http://0.0.0.0:5200/login", requestOptions)
+    fetch("http://localhost:5200/login", requestOptions)
       .then((response) => response.text())
-      .then((result) =>
-        result === "Error - Username not found"
-          ? alert("User is not registered")
-          : result === "Error - Invalid password"
-          ? alert("Invalid password")
-          : this.setState({ ProfileOpen: true })
-      )
+      .then((result) => {
+        if (result === "Error - Username not found") {
+          alert("User is not registered")
+        } else if (result === "Error - Invalid password") {
+          alert("Invalid password")
+        } else {
+          this.setState({ ProfileOpen: true })
+          var res = JSON.parse(result)
+          localStorage.setItem("usertoken", res.token)
+        }
+      })
       .catch((error) => console.log("errors", error));
   }
 

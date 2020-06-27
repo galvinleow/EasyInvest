@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Line } from "react-chartjs-2";
+import jwt_decode from 'jwt-decode'
 
 class Graph extends Component {
   constructor(props) {
@@ -29,8 +30,12 @@ class Graph extends Component {
       redirect: "follow",
     };
 
+    const token = localStorage.usertoken
+    const decoded = jwt_decode(token)
+    const uuid = decoded.identity.uuid
+    console.log(uuid)
     fetch(
-      "http://0.0.0.0:5200/calculateProjected/NAAZ73IB8XGqOAw36Ph3",
+      "http://localhost:5200/calculateProjected/" + uuid,
       requestOptions
     )
       .then((response) => response.text())

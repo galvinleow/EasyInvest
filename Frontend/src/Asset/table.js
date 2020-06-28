@@ -66,7 +66,7 @@ class Table extends Component {
               interest: asset.rate,
               value: asset.amount[0].value,
               uuid: asset.uuid,
-              date: asset.amount[0].date,
+              date: asset.amount[0].date
             };
           });
           this.setState({ data: newAssets });
@@ -216,7 +216,6 @@ class Table extends Component {
                   ],
                 };
 
-                console.log(oldData.uuid);
                 var requestOptions = {
                   method: "POST",
                   headers: {

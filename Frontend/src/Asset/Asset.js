@@ -1,6 +1,6 @@
 import React, { Component, useEffect, useState } from "react";
 import { Grid } from "@material-ui/core";
-import Table from "./test.js";
+import Table from "./table.js";
 import Analysis from "../Analysis/Analysis";
 import Graph from "./graph";
 import jwt_decode from "jwt-decode";

@@ -60,20 +60,20 @@ class Table extends Component {
 
       if (!responseJson.error) {
         if (responseJson.asset.length) {
-          // the map function creates a new array from the old array
-
           const newAssets = responseJson.asset.map((asset) => {
             return {
               name: asset.name,
               interest: asset.rate,
               value: asset.amount[0].value,
+              uuid: asset.uuid,
+              date: asset.amount[0].date,
             };
           });
-          // save this new array to state
           this.setState({ data: newAssets });
+          console.log(this.state.data);
         }
       } else {
-        console("Cant Connect toSErber");
+        console("Cant Connect to Server");
       }
     } catch (err) {
       console.warn(err);
@@ -159,13 +159,14 @@ class Table extends Component {
                       amount: [
                         {
                           date: new Date().toLocaleDateString(),
-                          value: "1",
+                          value: newData.value,
                         },
                       ],
-                      name: "sc",
-                      rate: "1",
+                      name: newData.name,
+                      rate: newData.interest,
                       type: "saving",
-                      uuid: "3c575070-b771-11ea-979e-acde48001122",
+                      uuid: oldData.uuid,
+                      //uuid: "3c575070-b771-11ea-979e-acde48001122",
                     },
                   ],
                 };
@@ -203,18 +204,19 @@ class Table extends Component {
                     {
                       amount: [
                         {
-                          date: "11/03/2020",
-                          value: "100000",
+                          date: oldData.date,
+                          value: oldData.value,
                         },
                       ],
-                      name: "DBS",
-                      rate: "5",
+                      name: oldData.name,
+                      rate: oldData.interest,
                       type: "saving",
-                      uuid: "bcc33675-b770-11ea-9dc9-acde48001122",
+                      uuid: oldData.uuid,
                     },
                   ],
                 };
 
+                console.log(oldData.uuid);
                 var requestOptions = {
                   method: "POST",
                   headers: {

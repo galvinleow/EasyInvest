@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -9,7 +9,7 @@ import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import DeleteIcon from "@material-ui/icons/Delete";
 import IconButton from "@material-ui/core/IconButton";
-import ToolTip from "./Tooltip";
+//import ToolTip from "./Tooltip";
 
 const useStyles = makeStyles({
   table: {
@@ -21,30 +21,22 @@ function createData(share, currentRatio, ROE, Dividend, EPS) {
   return { share, currentRatio, ROE, Dividend, EPS };
 }
 
+//const rows = [createData("Amazon", 1.08, 18.58, 23.18, 0.13)];
 
-
-
-const rows = [createData("Amazon", 1.08, 18.58, 23.18, 0.13)];
-
-export default function SimpleTable() {
+export default function SimpleTable(props) {
   const classes = useStyles();
   const [assets, setState] = useState({
     assets: [],
   });
-  
 
-  useEffect(() => {
-    fetch(
-      "http://0.0.0.0:5200/getDataFromUUID/asset/jerY83IB35d_ivospiSm"
-    ).then((response) =>
-      response.json().then((data) => {
-        setState({  data.asset });
-      })
-    );
-  }, []);
+  const allAssets = props.assets;
+  function createData(name, interest, value) {
+    return { name: name, interest: interest, value: value };
+  }
 
-
-
+  const rows = allAssets.map((asset) =>
+    createData(asset.name, asset.rate, asset.amount[0].value)
+  );
 
   return (
     <TableContainer component={Paper}>
@@ -58,17 +50,15 @@ export default function SimpleTable() {
         </TableHead>
         <TableBody>
           {rows.map((row) => (
-            <TableRow key={row.share}>
+            <TableRow key={row.name}>
               <TableCell component="th" scope="row">
-                {row.share}
-                <IconButton aria-label="delete" className={classes.margin}>
+                {row.name}
+                {/* <IconButton aria-label="delete" className={classes.margin}>
                   <DeleteIcon />
-                </IconButton>
+                </IconButton> */}
               </TableCell>
-              <TableCell align="center">{row.currentRatio}</TableCell>
-              <TableCell align="center">{row.ROE}</TableCell>
-              <TableCell align="center">{row.Dividend}</TableCell>
-              <TableCell align="center">{row.EPS}</TableCell>
+              <TableCell align="center">{row.interest}</TableCell>
+              <TableCell align="center">{row.value}</TableCell>
             </TableRow>
           ))}
         </TableBody>

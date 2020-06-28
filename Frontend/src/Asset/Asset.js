@@ -1,9 +1,10 @@
 import React, { Component, useEffect, useState } from "react";
 import { Grid } from "@material-ui/core";
-import Table from "./table.jsx";
+import Table from "./Table2.jsx";
 import Analysis from "../Analysis/Analysis";
 import Graph from "./graph";
 import jwt_decode from "jwt-decode";
+//import Test from "./Test2.js";
 
 export default function Asset(props) {
   const [state, setState] = useState({
@@ -16,6 +17,7 @@ export default function Asset(props) {
   const token = localStorage.usertoken;
   const decoded = jwt_decode(token);
   const uuid = decoded.identity.uuid;
+  console.log(uuid);
 
   useEffect(() => {
     fetch("http://0.0.0.0:5200/getDataFromUUID/asset/" + uuid).then(

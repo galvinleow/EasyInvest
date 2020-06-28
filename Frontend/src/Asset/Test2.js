@@ -40,20 +40,11 @@ export const Test=(props)=>{
       ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />),
     };
 
-    // const [state, setState] = React.useState({
-    //     cached: false,
-    //     columns:c [
-    //       { title: "Asset Name", field: "name" },
-    //       {
-    //         title: "Interest Rate per annum (%)",
-    //         field: "interest",
-    //         type: "numeric",
-    //       },
-    //       { title: "Current Value", field: "value", type: "numeric" },
-    //     ],
-    //     //to loop through database
-    //     data: [],
-    //   });
+    const [state, setState] = React.useState({
+        //cached: false,
+        //to loop through database
+        data: [],
+      });
 
       const columns = [
         { title: "Asset Name", field: "name" },
@@ -137,11 +128,11 @@ export const Test=(props)=>{
                     .then((result) => console.log(result))
                     .catch((error) => console.log("error", error));
     
-                //   setState((prevState) => {
-                    // const data = [...prevState.data];
+                  setState((prevState) => {
+                    const data = [...prevState.data];
                     data.push(newData);
-                //     return { ...prevState, data };
-                //   });
+                    return { ...prevState, data };
+                  });
                 }, 600);
               }),
             onRowUpdate: (newData, oldData) =>
@@ -237,3 +228,5 @@ export const Test=(props)=>{
     );
 
 }
+
+export default Test;

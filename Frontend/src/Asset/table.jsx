@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import MaterialTable from "material-table";
 import { forwardRef } from "react";
+import { PropTypes } from "prop-types";
 
 import AddBox from "@material-ui/icons/AddBox";
 import ArrowUpward from "@material-ui/icons/ArrowUpward";
@@ -49,8 +50,7 @@ export default function MaterialTableDemo(props) {
   const dataList = allAssets.map((asset) =>
     createData(asset.name, asset.rate, asset.amount[0].value)
   );
-  // setState({data: dataList});
-  
+
   const [state, setState] = React.useState({
     columns: [
       { title: "Asset Name", field: "name" },
@@ -62,11 +62,11 @@ export default function MaterialTableDemo(props) {
       { title: "Current Value", field: "value", type: "numeric" },
     ],
     //to loop through database
-    data: [{name: "oCBC", interest: 5, value: 6}],
+    data: dataList,
   });
 
-  console.log(dataList)
-  console.log(state.data);
+  //setState({data: dataList});
+  //console.log(state.data);
 
   return (
     <MaterialTable

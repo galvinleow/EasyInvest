@@ -33,24 +33,34 @@ class Graph extends Component {
 
       if (!responseJson.error) {
         if (responseJson.asset.length) {
-          const labelList = []
-          const dataList = []
           const newAssets = responseJson.asset.map((asset) => {
-            const amount = asset.amount
-            for (var i = 0; i < amount.length; i++){
-              labelList.push(amount[i].date)
-              dataList.push(amount[i].value)
-              console.log(amount[i].value)
-            }
             return {
               label: asset.name,
-              data: dataList,
-              // backgroundColor: "rgba(255, 99, 132, 0.6)"
+              amount: asset.amount
             };
           });
-          this.setState({ chartData: { ...this.state.chartData, labels: labelList} });
-          this.setState({ chartData: { ...this.state.chartData, datasets: newAssets} });
-          console.log(this.state.chartData.datasets);
+
+          const labelList = newAssets.map((asset) => {
+            return asset.amount.map(amount => {
+              return amount.date
+            })
+          })
+
+          const dataList = newAssets.map((asset) => {
+            const temp =asset.amount.map(amount => {
+              return amount.value
+            })
+            return {
+              label: asset.label,
+              data: temp,
+              // backgroundColor: "rgba(255, 99, 132, 0.6)"
+            }
+          })
+
+          // console.log(dataList)
+          this.setState({ chartData: { ...this.state.chartData, labels: labelList[0]} });
+          this.setState({ chartData: { ...this.state.chartData, datasets: dataList} });
+          // console.log(this.state.chartData.datasets);
         }
       } else {
         console("Cant Connect to Server");

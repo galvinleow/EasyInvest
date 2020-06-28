@@ -158,6 +158,7 @@ def update_asset(client, index, json_data, user_uuid):
     to_update_amount_date = datetime.strptime(to_update_amount["date"], "%d/%m/%Y").date()
     str_update_date_month_year = str(to_update_amount_date.month) + "/" + str(to_update_amount_date.year)
     to_update_amount_date_month_year = datetime.strptime(str_update_date_month_year, "%m/%Y")
+    isUpdated = False
 
     # Check if within 1 year from today
     if today_minus1year_month_year <= to_update_amount_date_month_year <= today_month_year:
@@ -165,7 +166,7 @@ def update_asset(client, index, json_data, user_uuid):
             # Get the correct element to update
             if element["uuid"] == to_update_uuid:
                 element_amount = element["amount"]
-
+                isUpdated = True
                 new_list = []
                 while len(to_update["amount"]) > 0:
                     for amount in element_amount:
@@ -190,14 +191,16 @@ def update_asset(client, index, json_data, user_uuid):
                 to_update["amount"] = new_list
                 asset_list.remove(element)
                 asset_list.append(json_data["asset"][0])
-
-        doc_update = {
-            "doc": {
+        if isUpdated:
+            doc_update = {
+                "doc": {
+                }
             }
-        }
-        doc_update['doc']['asset'] = asset_list
-        client.update(index=index, doc_type='_doc', id=user_uuid, body=doc_update, refresh=True)
-        return "Updated Asset with UUID: [" + index + "] index of UUID [" + user_uuid + "]"
+            doc_update['doc']['asset'] = asset_list
+            client.update(index=index, doc_type='_doc', id=user_uuid, body=doc_update, refresh=True)
+            return "Updated Asset with UUID: [" + index + "] index of UUID [" + user_uuid + "]"
+        else:
+            return "Error - Asset Not Found"
     else:
         return "Error - Invalid update as Datetime is out of range"
 

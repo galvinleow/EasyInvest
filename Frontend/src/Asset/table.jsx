@@ -66,7 +66,8 @@ export default function MaterialTableDemo(props) {
   });
 
   //setState({data: dataList});
-  //console.log(state.data);
+  console.log(state.data);
+  console.log(dataList);
 
   return (
     <MaterialTable

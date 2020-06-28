@@ -1,6 +1,6 @@
 import React, { Component, useEffect, useState } from "react";
 import { Grid } from "@material-ui/core";
-import Table from "./Table2.jsx";
+import Table from "./test.js";
 import Analysis from "../Analysis/Analysis";
 import Graph from "./graph";
 import jwt_decode from "jwt-decode";
@@ -20,11 +20,10 @@ export default function Asset(props) {
   console.log(uuid);
 
   useEffect(() => {
-    fetch("getDataFromUUID/asset/" + uuid).then(
-      (response) =>
-        response.json().then((data) => {
-          setState({ assets: data.asset });
-        })
+    fetch("getDataFromUUID/asset/" + uuid).then((response) =>
+      response.json().then((data) => {
+        setState({ assets: data.asset });
+      })
     );
   }, []);
 

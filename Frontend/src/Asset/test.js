@@ -38,40 +38,42 @@ class Table extends Component {
   constructor(props) {
     super(props);
     this.state = {
-        columns: [
-            { title: "Asset Name", field: "name" },
-            {
-              title: "Interest Rate per annum (%)",
-              field: "interest",
-              type: "numeric",
-            },
-            { title: "Current Value", field: "value", type: "numeric" },
-          ],
+      columns: [
+        { title: "Asset Name", field: "name" },
+        {
+          title: "Interest Rate per annum (%)",
+          field: "interest",
+          type: "numeric",
+        },
+        { title: "Current Value", field: "value", type: "numeric" },
+      ],
       data: [],
     };
   }
 
-  async componentDidMount () {
+  async componentDidMount() {
     try {
-      let response =  await fetch("getDataFromUUID/asset/" + this.props.id, { method: 'GET'});
+      let response = await fetch("getDataFromUUID/asset/" + this.props.id, {
+        method: "GET",
+      });
       let responseJson = await response.json();
-  
+
       if (!responseJson.error) {
-        if (responseJson.result.length) {
+        if (responseJson.asset.length) {
           // the map function creates a new array from the old array
-          const newAssets = responseJson.result.map(asset => {
+
+          const newAssets = responseJson.asset.map((asset) => {
             return {
-                name: asset.name, 
-                interest: asset.rate,
-                value: asset.amount[0].value,
-                
-            }
+              name: asset.name,
+              interest: asset.rate,
+              value: asset.amount[0].value,
+            };
           });
           // save this new array to state
-          this.setState({data: newAssets});
+          this.setState({ data: newAssets });
         }
       } else {
-        console.log("Cant Connect toSErber");
+        console("Cant Connect toSErber");
       }
     } catch (err) {
       console.warn(err);

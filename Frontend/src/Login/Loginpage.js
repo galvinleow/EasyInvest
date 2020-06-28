@@ -39,7 +39,7 @@ export class LoginPage extends Component {
       redirect: "follow",
     };
 
-    fetch("http://0.0.0.0:5200/register", requestOptions)
+    fetch("/register", requestOptions)
       .then((response) => response.text())
       .then((result) =>
         result === "Username already exist"
@@ -67,7 +67,7 @@ export class LoginPage extends Component {
       redirect: "follow",
     };
 
-    fetch("http://0.0.0.0:5200/login", requestOptions)
+    fetch("/login", requestOptions)
       .then((response) => response.text())
       .then((result) => {
         if (result === "Error - Username not found") {

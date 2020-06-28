@@ -35,7 +35,7 @@ class Graph extends Component {
     const uuid = decoded.identity.uuid
     console.log(uuid)
     fetch(
-      "http://localhost:5200/calculateProjected/" + uuid,
+      "/calculateProjected/" + uuid,
       requestOptions
     )
       .then((response) => response.text())

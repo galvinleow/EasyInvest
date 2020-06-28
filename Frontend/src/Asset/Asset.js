@@ -20,7 +20,7 @@ export default function Asset(props) {
   console.log(uuid);
 
   useEffect(() => {
-    fetch("http://0.0.0.0:5200/getDataFromUUID/asset/" + uuid).then(
+    fetch("getDataFromUUID/asset/" + uuid).then(
       (response) =>
         response.json().then((data) => {
           setState({ assets: data.asset });

@@ -123,7 +123,7 @@ export const Test=(props)=>{
                     redirect: "follow",
                   };
     
-                  fetch("http://0.0.0.0:5200/addAsset/" + uuid, requestOptions)
+                  fetch("/addAsset/" + uuid, requestOptions)
                     .then((response) => response.text())
                     .then((result) => console.log(result))
                     .catch((error) => console.log("error", error));
@@ -166,7 +166,7 @@ export const Test=(props)=>{
                     redirect: "follow",
                   };
     
-                  fetch("http://0.0.0.0:5200/updateAsset/" + uuid, requestOptions)
+                  fetch("/updateAsset/" + uuid, requestOptions)
                     .then((response) => response.text())
                     .then((result) => console.log(result))
                     .catch((error) => console.log("error", error));
@@ -211,7 +211,7 @@ export const Test=(props)=>{
                     redirect: "follow",
                   };
     
-                  fetch("http://0.0.0.0:5200/deleteAsset/" + uuid, requestOptions)
+                  fetch("/deleteAsset/" + uuid, requestOptions)
                     .then((response) => response.text())
                     .then((result) => console.log(result))
                     .catch((error) => console.log("error", error));

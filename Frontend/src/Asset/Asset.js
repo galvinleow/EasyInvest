@@ -35,7 +35,7 @@ export default function Asset(props) {
         <Grid item md={1}></Grid>
         <Grid item md={10} sm={12}>
           {" "}
-          <Graph />
+          <Graph id={uuid}/>
         </Grid>
         <Grid item md={1}></Grid>
         <Grid item md={3} sm={1}></Grid>

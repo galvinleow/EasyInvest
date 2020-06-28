@@ -160,6 +160,9 @@ def update_asset(client, index, json_data, user_uuid):
     to_update_amount_date_month_year = datetime.strptime(str_update_date_month_year, "%m/%Y")
     isUpdated = False
 
+    def myFunc(e):
+        return e["date"]
+
     # Check if within 1 year from today
     if today_minus1year_month_year <= to_update_amount_date_month_year <= today_month_year:
         for element in asset_list:
@@ -188,6 +191,7 @@ def update_asset(client, index, json_data, user_uuid):
                         for item in to_update["amount"]:
                             new_list.append(item)
                             to_update["amount"].pop()
+                new_list.sort(reverse=True, key=myFunc)
                 to_update["amount"] = new_list
                 asset_list.remove(element)
                 asset_list.append(json_data["asset"][0])

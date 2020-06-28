@@ -120,7 +120,7 @@ class Table extends Component {
                       amount: [
                         {
                           value: newData.value,
-                          date: new Date().toLocaleDateString(),
+                          date: new Date().toLocaleDateString('en-GB'),
                         },
                       ],
                     },
@@ -158,7 +158,7 @@ class Table extends Component {
                     {
                       amount: [
                         {
-                          date: new Date().toLocaleDateString(),
+                          date: new Date().toLocaleDateString('en-GB'),
                           value: newData.value,
                         },
                       ],

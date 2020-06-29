@@ -70,7 +70,6 @@ class Table extends Component {
             };
           });
           this.setState({ data: newAssets });
-          console.log(this.state.data);
         }
       } else {
         console("Cant Connect to Server");

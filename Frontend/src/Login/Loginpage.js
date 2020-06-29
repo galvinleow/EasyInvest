@@ -81,6 +81,7 @@ export class LoginPage extends Component {
           const res = JSON.parse(String(result));
           console.log(res)
           localStorage.setItem("usertoken", res.token);
+          console.log(localStorage.getItem("usertoken"))
         }
       })
       .catch((error) => console.log("errors", error));

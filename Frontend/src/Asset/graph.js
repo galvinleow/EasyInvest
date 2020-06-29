@@ -21,14 +21,17 @@ class Graph extends Component {
           // },
         ],
       },
+      // Add more color for better randomization
       bgColor: [
-        "rgba(255, 99, 132, 0.6)",
-        "rgba(54, 162, 235, 0.6)",
-        "rgba(255, 206, 86, 0.6)",
-        "rgba(75, 192, 192, 0.6)",
-        "rgba(153, 102, 255, 0.6)",
-        "rgba(255, 159, 64, 0.6)",
-        "rgba(255, 99, 132, 0.6)",
+        "rgba(255, 0, 0, 0.5)",
+        "rgba(0, 255, 0, 0.5)",
+        "rgba(0, 0, 255, 0.5)",
+        "rgba(54, 162, 235, 0.5)",
+        "rgba(255, 206, 86, 0.5)",
+        "rgba(75, 192, 192, 0.5)",
+        "rgba(153, 102, 255, 0.5)",
+        "rgba(255, 159, 64, 0.5)",
+        "rgba(255, 99, 1, 0.5)",
       ],
     };
     this.getRandomColor = this.getRandomColor.bind(this);
@@ -39,9 +42,6 @@ class Graph extends Component {
       Math.floor(Math.random() * this.state.bgColor.length)
     ];
     return item;
-    // this.setState({
-    //   chartData: { backgroundColor: item },
-    // });
   }
 
   async componentDidMount() {
@@ -56,8 +56,7 @@ class Graph extends Component {
           const newAssets = responseJson.asset.map((asset) => {
             return {
               label: asset.name,
-              amount: asset.amount,
-              backgroundColor: this.getRandomColor,
+              amount: asset.amount
             };
           });
 
@@ -74,7 +73,7 @@ class Graph extends Component {
             return {
               label: asset.label,
               data: temp,
-              backgroundColor: asset.backgroundColor,
+             backgroundColor: this.state.bgColor[Math.floor(Math.random() * this.state.bgColor.length)]
             };
           });
 
@@ -84,7 +83,7 @@ class Graph extends Component {
           this.setState({
             chartData: { ...this.state.chartData, datasets: dataList },
           });
-          // console.log(this.state.chartData.datasets);
+          console.log(this.state.chartData.datasets);
         }
       } else {
         console("Cant Connect to Server");

@@ -171,26 +171,23 @@ def update_asset(client, index, json_data, user_uuid):
                 element_amount = element["amount"]
                 isUpdated = True
                 new_list = []
-                while len(to_update["amount"]) > 0:
-                    for amount in element_amount:
-                        # Get datetime in database to compare with today datetime
-                        amount_date = datetime.strptime(amount["date"], "%d/%m/%Y").date()
-                        str_date_month_year = str(amount_date.month) + "/" + str(amount_date.year)
-                        date_month_year = datetime.strptime(str_date_month_year, "%m/%Y")
+                for amount in element_amount:
+                    # Get datetime in database to compare with today datetime
+                    amount_date = datetime.strptime(amount["date"], "%d/%m/%Y").date()
+                    str_date_month_year = str(amount_date.month) + "/" + str(amount_date.year)
+                    date_month_year = datetime.strptime(str_date_month_year, "%m/%Y")
 
-                        if today_minus1year_month_year <= date_month_year <= today_month_year:
-                            if date_month_year == to_update_amount_date_month_year:
-                                new_list.append(to_update["amount"][0])
-                                to_update["amount"].pop()
-                            else:
-                                new_list.append(amount)
+                    if today_minus1year_month_year <= date_month_year <= today_month_year:
+                        if date_month_year == to_update_amount_date_month_year:
+                            new_list.append(to_update["amount"].pop())
                         else:
-                            print("Error - Invalid update as Datetime is out of range")
-
-                    if len(to_update["amount"]) > 0:
-                        for item in to_update["amount"]:
-                            new_list.append(item)
-                            to_update["amount"].pop()
+                            new_list.append(amount)
+                    else:
+                        print("Error - Invalid update as Datetime is out of range")
+                if len(to_update["amount"]) > 0:
+                    for item in to_update["amount"]:
+                        new_list.append(item)
+                        to_update["amount"].pop()
                 new_list.sort(reverse=True, key=myFunc)
                 to_update["amount"] = new_list
                 asset_list.remove(element)

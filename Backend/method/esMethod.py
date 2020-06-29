@@ -119,12 +119,15 @@ def delete_asset(client, index, json_data, user_uuid):
 
     to_delete = json_data["asset"]
 
-    # Delete asset, using the whole element, but can be change to using UUID only
+    # Delete asset using uuid
     for element in to_delete:
-        if asset_list.count(element) > 0:
-            asset_list.remove(element)
-        else:
-            return "Error - Fail Delete Asset UUID (Asset does not exist): [" + index + "] index of UUID [" + user_uuid + "]"
+        for asset in asset_list:
+            if asset["uuid"] == element["uuid"]:
+                asset_list.remove(asset)
+                to_delete.pop()
+    
+    if len(to_delete) > 0:
+        return "Error - Fail Delete Asset UUID (Asset does not exist): [" + index + "] index of UUID [" + user_uuid + "]"
 
     doc_update = {
         "doc": {

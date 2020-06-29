@@ -45,6 +45,16 @@ export default function MenuAppBar(props) {
     props.changeAnalysis();
   };
 
+  const handleLogout = (e) => {
+    // e.preventDefault()
+    // localStorage.removeItem('usertoken')
+    // console.log('logout')
+    //props.history.push('/')
+    e.preventDefault();
+    localStorage.removeItem("usertoken");
+    window.location.href = "/";
+  };
+
   return (
     <div className={classes.root}>
       <AppBar position="static">
@@ -93,7 +103,9 @@ export default function MenuAppBar(props) {
               onClose={handleClose}
             >
               <MenuItem onClick={handleClose}>Profile</MenuItem>
-              <MenuItem onClick={handleClose}>Log Out</MenuItem>
+              <MenuItem /*onClick={handleClose}*/ onClick={handleLogout}>
+                Log Out
+              </MenuItem>
             </Menu>
           </div>
         </Toolbar>

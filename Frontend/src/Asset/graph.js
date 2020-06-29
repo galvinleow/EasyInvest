@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Line } from "react-chartjs-2";
-import jwt_decode from 'jwt-decode'
+import jwt_decode from "jwt-decode";
 
 class Graph extends Component {
   constructor(props) {
@@ -21,7 +21,27 @@ class Graph extends Component {
           // },
         ],
       },
+      bgColor: [
+        "rgba(255, 99, 132, 0.6)",
+        "rgba(54, 162, 235, 0.6)",
+        "rgba(255, 206, 86, 0.6)",
+        "rgba(75, 192, 192, 0.6)",
+        "rgba(153, 102, 255, 0.6)",
+        "rgba(255, 159, 64, 0.6)",
+        "rgba(255, 99, 132, 0.6)",
+      ],
     };
+    this.getRandomColor = this.getRandomColor.bind(this);
+  }
+
+  getRandomColor() {
+    var item = this.state.bgColor[
+      Math.floor(Math.random() * this.state.bgColor.length)
+    ];
+    return item;
+    // this.setState({
+    //   chartData: { backgroundColor: item },
+    // });
   }
 
   async componentDidMount() {
@@ -36,30 +56,34 @@ class Graph extends Component {
           const newAssets = responseJson.asset.map((asset) => {
             return {
               label: asset.name,
-              amount: asset.amount
+              amount: asset.amount,
+              backgroundColor: this.getRandomColor,
             };
           });
 
           const labelList = newAssets.map((asset) => {
-            return asset.amount.map(amount => {
-              return amount.date
-            })
-          })
+            return asset.amount.map((amount) => {
+              return amount.date;
+            });
+          });
 
           const dataList = newAssets.map((asset) => {
-            const temp =asset.amount.map(amount => {
-              return amount.value
-            })
+            const temp = asset.amount.map((amount) => {
+              return amount.value;
+            });
             return {
               label: asset.label,
               data: temp,
-              // backgroundColor: "rgba(255, 99, 132, 0.6)"
-            }
-          })
+             backgroundColor: asset.backgroundColor,
+            };
+          });
 
-          // console.log(dataList)
-          this.setState({ chartData: { ...this.state.chartData, labels: labelList[0]} });
-          this.setState({ chartData: { ...this.state.chartData, datasets: dataList} });
+          this.setState({
+            chartData: { ...this.state.chartData, labels: labelList[0] },
+          });
+          this.setState({
+            chartData: { ...this.state.chartData, datasets: dataList },
+          });
           // console.log(this.state.chartData.datasets);
         }
       } else {

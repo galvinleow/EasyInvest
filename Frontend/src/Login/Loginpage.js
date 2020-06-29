@@ -70,13 +70,16 @@ export class LoginPage extends Component {
     fetch("/login", requestOptions)
       .then((response) => response.text())
       .then((result) => {
+        console.log(typeof result)
+        console.log(JSON.parse(String(result)).token)
         if (result === "Error - Username not found") {
           alert("User is not registered");
         } else if (result === "Error - Invalid password") {
           alert("Invalid password");
         } else {
           this.setState({ ProfileOpen: true });
-          var res = JSON.parse(result);
+          const res = JSON.parse(String(result));
+          console.log(res)
           localStorage.setItem("usertoken", res.token);
         }
       })

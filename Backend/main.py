@@ -109,8 +109,10 @@ def login():
         to_check_password = body["password"]
         if bcrypt.check_password_hash(to_check_password, password):
             access_token = create_access_token(identity={"email": body["email"], "uuid": hits[0]["uuid"]})
-            result = jsonify({"token": access_token})
-            return result
+            print(type(access_token))
+            dic = {}
+            dic["token"] = access_token
+            return dic
         else:
             return "Error - Invalid password"
 

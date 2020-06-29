@@ -52,7 +52,7 @@ export default function MenuAppBar(props) {
     //props.history.push('/')
     e.preventDefault();
     localStorage.removeItem("usertoken");
-    window.location.href = "/";
+    window.location.href = "http://localhost:3000/";
   };
 
   return (

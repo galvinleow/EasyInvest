@@ -66,7 +66,7 @@ class Table extends Component {
               interest: asset.rate,
               value: asset.amount[0].value,
               uuid: asset.uuid,
-              date: asset.amount[0].date
+              date: asset.amount[0].date,
             };
           });
           this.setState({ data: newAssets });
@@ -120,7 +120,7 @@ class Table extends Component {
                       amount: [
                         {
                           value: newData.value,
-                          date: new Date().toLocaleDateString('en-GB'),
+                          date: new Date().toLocaleDateString("en-GB"),
                         },
                       ],
                     },
@@ -151,6 +151,9 @@ class Table extends Component {
           onRowUpdate: (newData, oldData) =>
             new Promise((resolve) => {
               setTimeout(() => {
+                if (!newData.name | !newData.interest | !newData.value) {
+                  alert("Fields cannot be empty! Please delete and add again!");
+                }
                 resolve();
                 //to get edited row after clicking edit -> save
                 const raw = {
@@ -158,7 +161,7 @@ class Table extends Component {
                     {
                       amount: [
                         {
-                          date: new Date().toLocaleDateString('en-GB'),
+                          date: new Date().toLocaleDateString("en-GB"),
                           value: newData.value,
                         },
                       ],

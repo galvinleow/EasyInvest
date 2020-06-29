@@ -16,7 +16,6 @@ export default function Asset(props) {
   const token = localStorage.usertoken;
   const decoded = jwt_decode(token);
  const uuid = decoded.identity.uuid;
- console.log(uuid);
 
   useEffect(() => {
     fetch("getDataFromUUID/asset/" + uuid).then((response) =>

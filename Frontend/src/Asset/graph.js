@@ -74,7 +74,7 @@ class Graph extends Component {
             return {
               label: asset.label,
               data: temp,
-             backgroundColor: asset.backgroundColor,
+              backgroundColor: asset.backgroundColor,
             };
           });
 
@@ -129,7 +129,7 @@ class Graph extends Component {
               position: "right",
             },
           }}
-          height="120"
+          height="140"
           width="450"
         />
       </div>

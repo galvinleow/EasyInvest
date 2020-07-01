@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import NavBar from "./NavBar";
-import  Asset  from "./Asset/Asset";
+import Asset from "./Asset/Asset";
 import { Analysis } from "./Analysis/Analysis";
 import { Grid } from "@material-ui/core";
 
@@ -41,6 +41,8 @@ export class MainPage extends Component {
             changeAnalysis={this.changeAnalysis}
           ></NavBar>
         </Grid>
+        <br />
+        <br />
         <Grid item container>
           {this.state.assetOpen && <Asset />}
           {this.state.analysisOpen && <Analysis />}

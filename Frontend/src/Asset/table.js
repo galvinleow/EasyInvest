@@ -88,7 +88,7 @@ class Table extends Component {
         data={this.state.data}
         options={{
           headerStyle: {
-            backgroundColor: "royalblue",
+            backgroundColor: "#3f51b5",
             color: "white",
           },
           rowStyle: {
@@ -145,6 +145,9 @@ class Table extends Component {
                   data.push(newData);
                   return { ...prevState, data };
                 });
+
+                this.props.handleChange();
+                //window.location.reload(false);
               }, 600);
             }),
           onRowUpdate: (newData, oldData) =>

@@ -1,4 +1,4 @@
-import React, { Component, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Grid } from "@material-ui/core";
 import Table from "./table.js";
 import Analysis from "../Analysis/Analysis";
@@ -9,7 +9,7 @@ export default function Asset(props) {
   const [state, setState] = useState({
     analysisOpen: false,
     assetOpen: true,
-    data: [],
+    data: 5,
     assets: [],
   });
 
@@ -25,9 +25,14 @@ export default function Asset(props) {
     );
   }, []);
 
+  const handleChange = () => {
+    setState({ data: 6} );
+    console.log(state.data);
+  };
+
   if (state.analysisOpen) {
     return <Analysis name={props.name} />;
-  }
+  } 
 
   return (
     <Grid container direction="column">
@@ -35,12 +40,12 @@ export default function Asset(props) {
         <Grid item md={1}></Grid>
         <Grid item md={10} sm={12}>
           {" "}
-          <Graph id={uuid}/>
+          <Graph id={uuid} />
         </Grid>
         <Grid item md={1}></Grid>
         <Grid item md={3} sm={1}></Grid>
         <Grid item md={6} sm={10} xs={12}>
-          <Table assets={state.assets} id={uuid} />
+          <Table assets={state.assets} id={uuid} handleChange={handleChange} />
         </Grid>
         <Grid item md={3} sm={1}></Grid>
       </Grid>

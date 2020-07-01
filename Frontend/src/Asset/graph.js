@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Line } from "react-chartjs-2";
-import jwt_decode from "jwt-decode";
+import RefreshIcon from "@material-ui/icons/Refresh";
+import Button from "@material-ui/core/Button";
 
 class Graph extends Component {
   constructor(props) {
@@ -8,18 +9,7 @@ class Graph extends Component {
     this.state = {
       chartData: {
         labels: [],
-        datasets: [
-          // {
-          //   label: "OCBC",
-          //   data: [0],
-          //   backgroundColor: "royalblue",
-          // },
-          // {
-          //   label: "DBS",
-          //   data: [200, 600, 700, 100, 1500, 3000],
-          //   backgroundColor: "rgba(255, 99, 132, 0.6)",
-          // },
-        ],
+        datasets: [],
       },
       // Add more color for better randomization
       bgColor: [
@@ -32,7 +22,13 @@ class Graph extends Component {
         "rgba(153, 102, 255, 0.5)",
         "rgba(255, 159, 64, 0.5)",
         "rgba(255, 99, 1, 0.5)",
+        "rgb(255, 154, 162)",
+        "rgb(255, 218, 193)",
+        "rgb(226, 240, 203)",
+        "rgb(181, 234, 215)",
+        "rgb(199, 206, 234)",
       ],
+      name: "React Component reload sample",
     };
     this.getRandomColor = this.getRandomColor.bind(this);
   }
@@ -46,6 +42,11 @@ class Graph extends Component {
 
   async componentDidMount() {
     try {
+      this.setState({
+        chartData: {
+          datasets: this.props.assets,
+        },
+      });
       let response = await fetch("/calculateProjected/" + this.props.id, {
         method: "GET",
       });
@@ -56,7 +57,7 @@ class Graph extends Component {
           const newAssets = responseJson.asset.map((asset) => {
             return {
               label: asset.name,
-              amount: asset.amount
+              amount: asset.amount,
             };
           });
 
@@ -73,7 +74,9 @@ class Graph extends Component {
             return {
               label: asset.label,
               data: temp,
-             backgroundColor: this.state.bgColor[Math.floor(Math.random() * this.state.bgColor.length)]
+              backgroundColor: this.state.bgColor[
+                Math.floor(Math.random() * this.state.bgColor.length)
+              ],
             };
           });
 
@@ -92,25 +95,6 @@ class Graph extends Component {
       console.warn(err);
     }
   }
-
-  // getData() {
-  //   const requestOptions = {
-  //     method: "GET",
-  //     redirect: "follow",
-  //   };
-
-  //   const token = localStorage.usertoken
-  //   const decoded = jwt_decode(token)
-  //   const uuid = decoded.identity.uuid
-  //   console.log(uuid)
-  //   fetch(
-  //     "/calculateProjected/" + uuid,
-  //     requestOptions
-  //   )
-  //     .then((response) => response.text())
-  //     .then((result) => console.log(result))
-  //     .catch((error) => console.log("error", error));
-  // }
 
   render() {
     return (

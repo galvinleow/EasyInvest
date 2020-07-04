@@ -231,7 +231,7 @@ def display_history_helper(amount_list):
     str_today_month_year = str(today.month) + "/" + str(today.year)
     today_month_year = datetime.strptime(str_today_month_year, "%m/%Y")
     # 1 year ago Today month/year datetime
-    one_year_ago = today - timedelta(days=356)
+    one_year_ago = today - timedelta(days=334)
     str_one_year_ago_month_date = str(one_year_ago.month) + "/" + str(one_year_ago.year)
     one_year_ago_month_date = datetime.strptime(str_one_year_ago_month_date, "%m/%Y")
 

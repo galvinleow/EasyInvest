@@ -7,18 +7,19 @@ import yahoofinance.Stock;
 import yahoofinance.YahooFinance;
 
 import java.io.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 public class Main {
     // Change path to whatever directory you want
-    private static final String path = "C:\\Users\\galvi\\Galvin\\NUS Notes\\Orbital\\Code\\Crawler\\data\\";
+    private static final String path = "C:\\Users\\galvi\\Galvin\\NUS Notes\\Orbital\\EasyInvest\\Crawler\\data\\";
     private static ArrayList<String> info = new ArrayList<>();
     private static final String authCodeSohGalvin = "33038b227dmsh4e44edf84b14d47p1e5400jsn859fb81ac0ae";
     private static final String authCodeGalvinNus = "7a26119401msh1d91946acab6401p141e1bjsn6d72c64726fa";
-    private static final Map<String, Map<String, Double>> database = new HashMap<>();
+    private static final JSONObject database = new JSONObject();
 
     static {
         info.add("RETURN ON EQUITY %");
@@ -28,13 +29,12 @@ public class Main {
     }
 
     public static void main(String[] args) {
-//        Map<String, Double> individualData = new HashMap<>();
-
         //Current only XNAS is okay, XSES not done
         Map<String, ArrayList<String>> micTickMap = new HashMap<>();
         ArrayList<String> tickerArr = new ArrayList<>();
         tickerArr.add("AAPL");
         tickerArr.add("AMZN");
+        tickerArr.add("BMRC");
         micTickMap.put("XNAS", tickerArr);
 
 
@@ -48,14 +48,32 @@ public class Main {
         // Write to file, cause do not want too keep hitting API else costly
         micTickMap.forEach((mic, arr) -> {
             for (String ticker : arr) {
-                Map<String, Double> individualData = new HashMap<>();
+                System.out.println("Started crawling: " + ticker);
+                JSONObject individualData = new JSONObject();
+                individualData.put("MIC", mic);
+
                 Response responseStat = hitAPI(
                         "https://morningstar1.p.rapidapi.com/keyratios/statistics?Ticker=" + ticker + "&Mic=" + mic);
-                writToFile(responseStat, path + ticker + "Stat.txt");
+                writeResponseToFile(responseStat, path + ticker + "Stat.txt");
 
                 Response responseFinance = hitAPI(
                         "https://morningstar1.p.rapidapi.com/keyratios/financials?Ticker=" + ticker + "&Mic=" + mic);
-                writToFile(responseFinance, path + ticker + "Finance.txt");
+                writeResponseToFile(responseFinance, path + ticker + "Finance.txt");
+
+                // Have to add waiting due to using Free API with call limit
+                wait(1000);
+
+                Response responseDividend = hitAPI("https://morningstar1.p.rapidapi.com/dividends?Ticker=" +
+                        ticker + "&Mic=" + mic);
+                writeResponseToFile(responseDividend, path + ticker + "Dividends.txt");
+
+                // Have to add waiting due to using Free API with call limit
+                wait(1000);
+
+                Response responseProfile = hitAPI(
+                        "https://morningstar1.p.rapidapi.com/companies/get-company-profile?Ticker=" +
+                                ticker + "&Mic=" + mic);
+                writeResponseToFile(responseProfile, path + ticker + "Profile.txt");
 
                 if (mic.equals("XSES")) {
                     try {
@@ -69,31 +87,40 @@ public class Main {
                     Response responseEODQ = hitAPI(
                             "https://morningstar1.p.rapidapi.com/endofdayquotes/history?Mic=" + mic +
                                     "&EndOfDayQuoteTicker=126.1." + ticker);
-                    writToFile(responseEODQ, path + ticker + "EODQ.txt");
+                    writeResponseToFile(responseEODQ, path + ticker + "EODQ.txt");
                     txtToDataEODQ(path + ticker + "EODQ.txt", individualData);
                 }
-
-                Response responseDividend = hitAPI("https://morningstar1.p.rapidapi.com/dividends?Ticker=" +
-                        ticker + "&Mic=" + mic);
-                writToFile(responseDividend, path + ticker + "Dividends.txt");
 
                 txtToDataKeyRatio(path + ticker + "Stat.txt", individualData);
                 txtToDataKeyRatio(path + ticker + "Finance.txt", individualData);
                 txtToDataDividend(path + ticker + "Dividends.txt", individualData);
+                txtToDataProfile(path + ticker + "Profile.txt", individualData);
 
                 // Calculate Dividend Yield based on "live" data
-                double dividendYield = (individualData.get("DIVIDENDS") * 4) / individualData.get("LATEST SHARE PRICE");
-                individualData.put("DIVIDENDS YEILD", dividendYield);
+                double dividendYield = (individualData.getDouble("DIVIDENDS") * 4)
+                        / individualData.getDouble("LATEST SHARE PRICE");
+                individualData.put("DIVIDENDS YIELD", dividendYield);
+                double peRatio = individualData.getDouble("LATEST SHARE PRICE")
+                        / individualData.getDouble("EPS %");
+                individualData.put("PE RATIO", peRatio);
                 database.put(ticker, individualData);
-                System.out.println(ticker);
-                try {
-                    Thread.sleep(4000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                wait(2000);
             }
         });
-        database.entrySet().forEach(System.out::println);
+//        System.out.println(database);
+//        database.entrySet().forEach(System.out::println);
+//        JSONObject jsonData = new JSONObject(database);
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy_MM_dd");
+        LocalDate localDate = LocalDate.now();
+        writeJsonToFile(database, path + "final\\" + "Final_" + dtf.format(localDate) + ".json");
+    }
+
+    private static void wait(int time) {
+        try {
+            Thread.sleep(time);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     private static Response hitAPI(String url) {
@@ -104,7 +131,7 @@ public class Main {
                     .url(url)
                     .get()
                     .addHeader("x-rapidapi-host", "morningstar1.p.rapidapi.com")
-                    .addHeader("x-rapidapi-key", authCodeGalvinNus)
+                    .addHeader("x-rapidapi-key", authCodeSohGalvin)
                     .addHeader("accept", "string")
                     .build();
             response = client.newCall(request).execute();
@@ -114,10 +141,33 @@ public class Main {
         return response;
     }
 
-    private static void writToFile(Response response, String path) {
-        try (FileWriter writer = new FileWriter(path);
-             BufferedWriter bw = new BufferedWriter(writer)) {
-            bw.write(response.body().string());
+    private static void writeResponseToFile(Response response, String path) {
+        File file = new File(path);
+        try {
+            if (file.createNewFile()) {
+                System.out.println("File is created");
+            } else {
+                System.out.println("File already exist: " + path);
+            }
+            FileWriter writer = new FileWriter(file);
+            writer.write(response.body().string());
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static void writeJsonToFile(JSONObject content, String path) {
+        File file = new File(path);
+        try {
+            if (file.createNewFile()) {
+                System.out.println("File is created");
+            } else {
+                System.out.println("File already exist");
+            }
+            FileWriter writer = new FileWriter(file);
+            content.write(writer);
+            writer.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -137,7 +187,28 @@ public class Main {
         return content;
     }
 
-    private static void txtToDataDividend(String path, Map<String, Double> individualData) {
+    private static void txtToDataProfile(String path, JSONObject individualData) {
+        String content = fileToString(path);
+
+        assert content != null;
+        JSONObject jsonObject = new JSONObject(content);
+        JSONObject jsonResult = jsonObject.getJSONObject("result");
+        JSONObject jsonIndustry = jsonResult.getJSONObject("industry");
+        individualData.put("INDUSTRY", jsonIndustry.getString("value"));
+        System.out.println(individualData);
+
+//        JSONArray jsonArray = jsonObject.getJSONArray("results");
+//        if (jsonArray.length() > 0) {
+//            JSONObject details = jsonArray.getJSONObject(0);
+//            if (individualData.containsKey("DIVIDENDS")) {
+//                individualData.replace("DIVIDENDS", details.getDouble("amount"));
+//            } else {
+//                individualData.put("DIVIDENDS", details.getDouble("amount"));
+//            }
+//        }
+    }
+
+    private static void txtToDataDividend(String path, JSONObject individualData) {
         String content = fileToString(path);
 
         assert content != null;
@@ -145,15 +216,14 @@ public class Main {
         JSONArray jsonArray = jsonObject.getJSONArray("results");
         if (jsonArray.length() > 0) {
             JSONObject details = jsonArray.getJSONObject(0);
-            if (individualData.containsKey("DIVIDENDS")) {
-                individualData.replace("DIVIDENDS", details.getDouble("amount"));
-            } else {
-                individualData.put("DIVIDENDS", details.getDouble("amount"));
+            if (individualData.has("DIVIDENDS")) {
+                individualData.remove("DIVIDENDS");
             }
+            individualData.put("DIVIDENDS", details.getDouble("amount"));
         }
     }
 
-    private static void txtToDataEODQ(String path, Map<String, Double> individualData) {
+    private static void txtToDataEODQ(String path, JSONObject individualData) {
         String content = fileToString(path);
 
         assert content != null;
@@ -168,7 +238,7 @@ public class Main {
         }
     }
 
-    private static void txtToDataKeyRatio(String path, Map<String, Double> individualData) {
+    private static void txtToDataKeyRatio(String path, JSONObject individualData) {
         String content = fileToString(path);
 
         assert content != null;
@@ -184,7 +254,7 @@ public class Main {
         }
     }
 
-    private static void extractLineItem(JSONArray arr, Map<String, Double> individualData) {
+    private static void extractLineItem(JSONArray arr, JSONObject individualData) {
         if (arr.length() > 0) {
             for (int j = 0; j < arr.length(); j++) {
                 JSONObject item = arr.getJSONObject(j);
@@ -199,7 +269,7 @@ public class Main {
         }
     }
 
-    private static void extractSubItem(JSONArray subsection, Map<String, Double> individualData) {
+    private static void extractSubItem(JSONArray subsection, JSONObject individualData) {
         if (subsection.length() > 0) {
             for (int i = 0; i < subsection.length(); i++) {
                 JSONObject subLine = subsection.getJSONObject(i);

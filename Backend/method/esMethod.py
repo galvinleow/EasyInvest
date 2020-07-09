@@ -4,6 +4,7 @@ from itertools import chain
 
 from elasticsearch_dsl import Search
 
+from method import shares
 
 # Create new indices
 def create_new_indices(client, index):
@@ -62,11 +63,51 @@ def match_all_from_indices(client, index):
         raise Exception('Error - SearchError: Invalid Syntax / Indices')
 
 
+def search_exact_docs(client, index, arg_dict):
+    try:
+        s = Search()[0:9999].using(client).index(index).filter('term', **arg_dict)
+        response = s.execute()
+        hits_list = format_response(response)
+
+        if len(hits_list) == 0:
+            print('SearchError: No match found ')
+            return hits_list
+        else:
+            return hits_list
+
+    except:
+        raise Exception('SearchError: Invalid Search')
+
+
 # Index single entry json with defining UUID
 def create_with_uuid(client, index, json_data, uuid):
     client.index(index=index, doc_type="_doc", id=uuid, body=json_data, refresh=True)
     return "Index jsonArray using UUID for Indices: [" + index + "] & [" + uuid + "]"
 
+
+def get_days_in_a_month(month, year):
+    if month == 9 or month == 4 or month == 6 or month == 11:  # 30 day months
+        return 30
+    elif month == 2 and year % 4 == 0:  # leap year
+        return 29
+    elif month == 2:
+        return 28
+    else:
+        return 31
+
+
+def convert_full_date_to_month_year(date):
+    str_month_year = str(date.month) + "/" + str(date.year)
+    return datetime.strptime(str_month_year, "%m/%Y")
+
+def json_key_upper_case(json):
+    for element in json:
+        upper_case = {}
+        upper_case[element.upper()] = json[element]
+    return upper_case
+
+
+################################### Start of Asset Overview Method #####################################
 
 # Add asset to existing user with asset by using the UUID
 def add_asset(client, index, json_data, user_uuid):
@@ -125,7 +166,7 @@ def delete_asset(client, index, json_data, user_uuid):
             if asset["uuid"] == element["uuid"]:
                 asset_list.remove(asset)
                 to_delete.pop()
-    
+
     if len(to_delete) > 0:
         return "Error - Fail Delete Asset UUID (Asset does not exist): [" + index + "] index of UUID [" + user_uuid + "]"
 
@@ -134,6 +175,7 @@ def delete_asset(client, index, json_data, user_uuid):
         }
     }
     doc_update['doc']['asset'] = asset_list
+    print(doc_update)
     client.update(index=index, doc_type='_doc', id=user_uuid, body=doc_update, refresh=True)
     return "Delete Asset with UUID: [" + index + "] index of UUID [" + user_uuid + "]"
 
@@ -291,22 +333,6 @@ def display_history_helper(amount_list):
     return result
 
 
-def get_days_in_a_month(month, year):
-    if month == 9 or month == 4 or month == 6 or month == 11:  # 30 day months
-        return 30
-    elif month == 2 and year % 4 == 0:  # leap year
-        return 29
-    elif month == 2:
-        return 28
-    else:
-        return 31
-
-
-def convert_full_date_to_month_year(date):
-    str_month_year = str(date.month) + "/" + str(date.year)
-    return datetime.strptime(str_month_year, "%m/%Y")
-
-
 # Get 1 year of history and 4 years of projected value, does not update database
 def calculate_projected(client, user_uuid):
     history_data = display_history_data(client=client, index="asset", user_uuid=user_uuid)
@@ -334,18 +360,53 @@ def calculate_projected(client, user_uuid):
         asset["amount"] = result
     return history_data
 
-
-def search_exact_docs(client, index, arg_dict):
-    try:
-        s = Search()[0:9999].using(client).index(index).filter('term', **arg_dict)
+################################### Start of Investment Analysis Method #####################################
+def add_update_share(client, index, json_data, user_uuid):
+    if shares.if_ticker_exist(json_data[index][0]):
+        s = Search().using(client).index(index).query("match", _id=user_uuid)
         response = s.execute()
-        hits_list = format_response(response)
-
-        if len(hits_list) == 0:
-            print('SearchError: No match found ')
-            return hits_list
+        if len(response.hits) > 0:
+            for hit in response.hits:
+                # Get the asset list
+                shares_data = hit.to_dict()[index][0]
+                to_insert = json_data[index][0]
+                shares_data.update(json_key_upper_case(to_insert))
+                doc_update = {
+                    "doc": {
+                    }
+                }
+            doc_update['doc'][index] = [shares_data]
+            client.update(index=index, doc_type='_doc', id=user_uuid, body=doc_update, refresh=True)
+            return "Added Sharers with UUID tag: [" + index + "] & [" + user_uuid + "]"
         else:
-            return hits_list
+            json_data[index][0] = json_key_upper_case(json_data[index][0])
+            create_with_uuid(client=client, index=index, json_data=json_data, uuid=user_uuid)
+            return "Created and Added Shares with UUID tag: [" + index + "] & [" + user_uuid + "]"
+    else: 
+        return "Error - Currently do not support this ticker"
 
-    except:
-        raise Exception('SearchError: Invalid Search')
+def delete_share(client, index, json_data, user_uuid):
+    # Get the doc that store the asset data using UUID
+    data = client.get(index=index, doc_type="_doc", id=user_uuid)["_source"]
+    # Get the asset list
+    shares_list = data["shares"][0]
+
+    to_delete = json_data["shares"][0]
+    delete_acheived = True
+    for element in to_delete:
+        if element.upper() in shares_list:
+            del shares_list[element.upper()]
+            print("[" + element.upper() + "] have been deleted")
+        else:
+            delete_acheived = False
+    
+    if delete_acheived:
+        doc_update = {
+            "doc": {
+            }
+        }
+        doc_update['doc']['shares'] = [shares_list]
+        client.update(index=index, doc_type="_doc", id=user_uuid, body=doc_update, refresh=True)
+        return "Delete Asset with UUID: [" + index + "] index of UUID [" + user_uuid + "]"
+    else:
+        return "Error - All/Some Fail Delete Asset UUID (Asset does not exist): [" + index + "] index of UUID [" + user_uuid + "]"

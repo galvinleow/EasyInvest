@@ -6,16 +6,23 @@ data_shares_path = "C:/Users/galvi/Galvin/NUS Notes/Orbital/EasyInvest/Crawler/d
 
 # Get data from crawler file
 with open(data_shares_path) as f:
-        data = json.load(f)
+    data = json.load(f)
+
+def if_ticker_exist(ticker_data): 
+    exist = True
+    for ticker in ticker_data:
+        if not (ticker.upper() in data):
+            exist = False
+    return exist
 
 def get_individual_stock_score(ticker):
     ticker_data = data[ticker]
     industry = ticker_data["INDUSTRY"]
     result = {}
     current_ratio_score = get_score_with_range(share=ticker_data, indicator="CURRENT RATIO"
-        , upper_bound=2.0, lower_bound=1.2, max_value=2.0)
+                                               , upper_bound=2.0, lower_bound=1.2, max_value=2.0)
     dividend_score = get_score_with_range(share=ticker_data, indicator="DIVIDENDS YIELD"
-        , upper_bound=0.07, lower_bound=0.04, max_value=0.05)
+                                          , upper_bound=0.07, lower_bound=0.04, max_value=0.05)
     roe_score = get_score_roe(ticker_data)
     pe_score = get_score_pe_ratio(ticker_data)
     print(ticker_data)
@@ -26,6 +33,7 @@ def get_individual_stock_score(ticker):
     result["RETURN ON EQUITY %"] = roe_score
     result["PE RATIO"] = pe_score
     return result
+
 
 def get_score_with_range(share, indicator, upper_bound, lower_bound, max_value):
     indicator_value = share[indicator]
@@ -42,6 +50,7 @@ def get_score_with_range(share, indicator, upper_bound, lower_bound, max_value):
             return 0.0
         else:
             return value
+
 
 def get_score_roe(share):
     indicator_value = share["RETURN ON EQUITY %"]
@@ -60,6 +69,7 @@ def get_score_roe(share):
             return max_score
         else:
             return value
+
 
 def get_score_pe_ratio(share):
     # Future capabilities can change to fit industry as well
@@ -86,7 +96,3 @@ def get_score_pe_ratio(share):
             return max_score
         else:
             return value
-
-
-    
-

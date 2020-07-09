@@ -1,10 +1,10 @@
-# Initializing elasticseach
-
 from datetime import datetime
 
+# Initializing elasticseach
 from elasticsearch import Elasticsearch
 
 from method import esMethod
+from method import shares
 
 # Connect to elasticseach
 es = Elasticsearch([{'host': 'localhost', 'port': 9200}])
@@ -41,12 +41,23 @@ except:
     else:
         print("Error - Failed to create indices")
 
+try:
+    es.indices.create('shares')
+    print("[shares] indices created")
+except:
+    if es.indices.exists('shares'):
+        print("[shares] mapping already exists")
+    else:
+        print("Error - Failed to create indices")
 
-# Read file from path with filename and return string
-def open_file(path):
-    with open(path, 'r') as file:
-        string_file = file.read()
-        return string_file
+try:
+    es.indices.create('rank')
+    print("[rank] indices created")
+except:
+    if es.indices.exists('rank'):
+        print("[rank] mapping already exists")
+    else:
+        print("Error - Failed to create indices")
 
 
 # Start up of the flask backend
@@ -178,6 +189,26 @@ def display_history_data(user_uuid):
 def calculate_projected(user_uuid):
     # user_uuid = request.args.get("user_uuid")
     return esMethod.calculate_projected(client=es, user_uuid=user_uuid)
+
+
+@app.route('/getShareInformation/<ticker>', methods=['GET'])
+def get_shares_information(ticker):
+    return shares.get_individual_stock_score(ticker)
+
+@app.route('/addShares/<user_uuid>', methods=['POST'])
+def add_share(user_uuid):
+    json_data = request.json
+    return esMethod.add_update_share(client=es, index="shares", json_data=json_data, user_uuid=user_uuid)       
+
+@app.route('/deleteShares/<user_uuid>', methods=['POST'])
+def delete_share(user_uuid):
+    json_data = request.json
+    return esMethod.delete_share(client=es, index="shares", json_data=json_data, user_uuid=user_uuid) 
+
+# @app.route('/addRank/<user_uuid>', methods=['POST'])
+# def add_rank(user_uuid):
+#     json_data = request.json
+#     return esMethod.add_update_share(client=es, index="rank", json_data=json_data, user_uuid=user_uuid) 
 
 
 if __name__ == '__main__':

@@ -40,6 +40,7 @@ export class Login extends Component {
               id="username"
               name="username"
               onChange={this.onUsernameChange}
+              autoComplete="off"
             ></input>
           </div>
           <div className="input-group">

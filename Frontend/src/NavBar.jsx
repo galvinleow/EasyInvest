@@ -5,9 +5,9 @@ import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
 import AccountCircle from "@material-ui/icons/AccountCircle";
-import MenuItem from "@material-ui/core/MenuItem";
-import Menu from "@material-ui/core/Menu";
 import Drawer from "./Drawer.jsx";
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import { Tooltip } from "@material-ui/core";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -23,19 +23,8 @@ const useStyles = makeStyles((theme) => ({
 
 export default function MenuAppBar(props) {
   const classes = useStyles();
-  const [anchorEl, setAnchorEl] = React.useState(null);
-  const open = Boolean(anchorEl);
-  const name = props.name;
   const [analysisOpen] = useState(props.analysis);
   const [assetOpen] = useState(props.asset);
-
-  const handleMenu = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
 
   const handleAssetChange = () => {
     props.changeAsset();
@@ -46,13 +35,13 @@ export default function MenuAppBar(props) {
   };
 
   const handleLogout = (e) => {
-    // e.preventDefault()
-    // localStorage.removeItem('usertoken')
-    // console.log('logout')
-    //props.history.push('/')
     e.preventDefault();
     localStorage.removeItem("usertoken");
     window.location.href = "http://localhost:3000/";
+  };
+
+  const handleProfileClick = () => {
+    props.changeProfile();
   };
 
   return (
@@ -77,36 +66,16 @@ export default function MenuAppBar(props) {
           </Typography>
 
           <div>
-            <IconButton
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleMenu}
-              color="inherit"
-            >
-              <Typography>{name}</Typography>
-              <AccountCircle />
-            </IconButton>
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorEl}
-              anchorOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: "top",
-                horizontal: "right",
-              }}
-              open={open}
-              onClose={handleClose}
-            >
-              <MenuItem onClick={handleClose}>Profile</MenuItem>
-              <MenuItem /*onClick={handleClose}*/ onClick={handleLogout}>
-                Log Out
-              </MenuItem>
-            </Menu>
+            <Tooltip title="Profile">
+              <IconButton aria-label="Profile" onClick={handleProfileClick}>
+                <AccountCircle />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Log Out">
+              <IconButton aria-label="Log Out" onClick={handleLogout}>
+                <ExitToAppIcon />
+              </IconButton>
+            </Tooltip>
           </div>
         </Toolbar>
       </AppBar>

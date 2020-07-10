@@ -1,58 +1,67 @@
-import React, { Component } from "react";
+import React from "react";
 import TextField from "@material-ui/core/TextField";
-import MenuItem from "@material-ui/core/MenuItem";
 import Button from "@material-ui/core/Button";
-import { makeStyles } from "@material-ui/core/styles";
+import { withStyles } from "@material-ui/core/styles";
 
-class Form extends Component {
+const useStyles = (theme) => ({
+  root: {
+    "& > *": {
+      margin: theme.spacing(1),
+      width: "25ch",
+    },
+  },
+});
+
+class Form extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      assets: [
-        {
-          value: "singtel",
-          label: "Singtel",
-        },
-        {
-          value: "amazon",
-          label: "Amazon",
-        },
-        {
-          value: "dbs",
-          label: "DBS",
-        },
-        {
-          value: "sembcorp",
-          label: "Sembcorp Industries",
-        },
-      ],
-      chosen: "",
+      name: "",
+      amount: 0,
     };
+    this.handleNameChange = this.handleNameChange.bind(this);
+    this.handleAmountChange = this.handleAmountChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  handleChange = (event) => {
-    this.setState({ chosen: event.target.value });
-  };
+  handleNameChange(e) {
+    this.setState({ name: e.target.value });
+  }
 
+  handleAmountChange(e) {
+    this.setState({ amount: e.target.value });
+  }
+
+  handleSubmit() {
+    this.props.onSubmit(this.state.name, this.state.amount);
+    //get finalised name and amount
+  }
   render() {
+    const { classes } = this.props;
     return (
-      <form>
+      <form className={classes.root} autoComplete="off">
         <TextField
-          id="outlined-select-currency"
-          select
+          id="share_name"
           label="Share Name"
-          onChange={this.handleChange}
-          helperText="Please select a share"
+          onChange={this.handleNameChange}
+          helperText="eg.AAPL"
           variant="outlined"
           required
+        ></TextField>
+        <TextField
+          id="amount"
+          type="number"
+          label="Number of Shares"
+          onChange={this.handleAmountChange}
+          variant="outlined"
+          required
+        ></TextField>
+        <Button
+          size="large"
+          variant="contained"
+          color="primary"
+          onClick={this.handleSubmit}
         >
-          {this.state.assets.map((option) => (
-            <MenuItem key={option.value} value={option.value}>
-              {option.label}
-            </MenuItem>
-          ))}
-        </TextField>
-        <Button size="large" variant="contained" color="primary">
           Add this share
         </Button>
       </form>
@@ -60,4 +69,4 @@ class Form extends Component {
   }
 }
 
-export default Form;
+export default withStyles(useStyles)(Form);

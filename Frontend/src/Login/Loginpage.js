@@ -3,7 +3,6 @@ import "./LoginStyle.scss";
 import { Login } from "./Login";
 import { Register } from "./Register";
 import "../App.css";
-import { Redirect } from "react-router-dom";
 import { MainPage } from "../MainPage";
 
 export class LoginPage extends Component {
@@ -95,7 +94,6 @@ export class LoginPage extends Component {
     if (this.state.ProfileOpen) {
       return (
         <div>
-          <Redirect to="./Asset" />
           <MainPage name={this.state.username} />
         </div>
       );

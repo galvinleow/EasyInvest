@@ -1,7 +1,5 @@
 import React, { Component } from "react";
 import { Line } from "react-chartjs-2";
-import RefreshIcon from "@material-ui/icons/Refresh";
-import Button from "@material-ui/core/Button";
 
 class Graph extends Component {
   constructor(props) {
@@ -27,6 +25,23 @@ class Graph extends Component {
         "rgb(226, 240, 203)",
         "rgb(181, 234, 215)",
         "rgb(199, 206, 234)",
+        "#800000",
+        "#A52A2A",
+        "#DC143C",
+        "#FF6347",
+        "#FF7F50",
+        "#CD5C5C",
+        "#F08080",
+        "#E9967A",
+        "#FF4500",
+        "#FF8C00",
+        "#FFD700",
+        "#DAA520",
+        "#EEE8AA",
+        "#32CD32",
+        "#00CED1",
+        "#AFEEEE",
+        "#87CEEB",
       ],
       name: "React Component reload sample",
     };
@@ -42,11 +57,6 @@ class Graph extends Component {
 
   async componentDidMount() {
     try {
-      this.setState({
-        chartData: {
-          datasets: this.props.assets,
-        },
-      });
       let response = await fetch("/calculateProjected/" + this.props.id, {
         method: "GET",
       });

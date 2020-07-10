@@ -2,7 +2,7 @@ import json
 
 # Max score for the formula
 max_score = 5.0
-data_shares_path = "C:/Users/galvi/Galvin/NUS Notes/Orbital/EasyInvest/Crawler/data/final/Final_2020_07_08.json"
+data_shares_path = "/Users/zermainelew/Documents/orbital/Final_2020_07_08.json"
 
 # Get data from crawler file
 with open(data_shares_path) as f:

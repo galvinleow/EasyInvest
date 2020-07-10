@@ -146,7 +146,7 @@ class Table extends Component {
                   return { ...prevState, data };
                 });
 
-                this.props.handleChange();
+                //this.props.handleChange();
                 //window.location.reload(false);
               }, 600);
             }),

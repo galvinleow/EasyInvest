@@ -74,6 +74,7 @@ class Table extends Component {
     };
   }
 
+  //get data from database
   //   async componentDidMount() {
   //     try {
   //       let response = await fetch("getDataFromUUID/asset/" + this.props.id, {

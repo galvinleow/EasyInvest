@@ -32,7 +32,8 @@ class Profile extends Component {
 
   handleSubmit() {
     console.log(this.state);
-    this.props.onSubmit();
+    alert("Ranks updated!");
+    //this.props.onSubmit();
     //get final rankings
   }
 

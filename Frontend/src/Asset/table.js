@@ -146,8 +146,7 @@ class Table extends Component {
                   return { ...prevState, data };
                 });
 
-                //this.props.handleChange();
-                //window.location.reload(false);
+                this.props.update();
               }, 600);
             }),
           onRowUpdate: (newData, oldData) =>
@@ -197,6 +196,7 @@ class Table extends Component {
                     return { ...prevState, data };
                   });
                 }
+                this.props.update();
               }, 600);
             }),
           onRowDelete: (oldData) =>
@@ -240,6 +240,7 @@ class Table extends Component {
                   data.splice(data.indexOf(oldData), 1);
                   return { ...prevState, data };
                 });
+                this.props.update();
               }, 600);
             }),
         }}

@@ -48,14 +48,6 @@ class Form extends React.Component {
           variant="outlined"
           required
         ></TextField>
-        <TextField
-          id="amount"
-          type="number"
-          label="Number of Shares"
-          onChange={this.handleAmountChange}
-          variant="outlined"
-          required
-        ></TextField>
         <Button
           size="large"
           variant="contained"

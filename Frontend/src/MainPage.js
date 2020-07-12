@@ -1,9 +1,11 @@
-import React, { Component } from "react";
+import React, { Component, Suspense, lazy } from "react";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import NavBar from "./NavBar";
-import Asset from "./Asset/Asset";
-import { Analysis } from "./Analysis/Analysis";
 import { Grid } from "@material-ui/core";
-import Profile from "./Profile/Profile";
+
+const Asset = lazy(() => import("./Asset/Asset"));
+const Analysis = lazy(() => import("./Analysis/Analysis"));
+const Profile = lazy(() => import("./Profile/Profile"));
 
 export class MainPage extends Component {
   constructor(props) {
@@ -46,20 +48,19 @@ export class MainPage extends Component {
     return (
       <Grid container direction="column">
         <Grid item>
-          <NavBar
-            changeAsset={this.changeAsset}
-            changeAnalysis={this.changeAnalysis}
-            changeProfile={this.changeProfile}
-          ></NavBar>
+          <NavBar></NavBar>
         </Grid>
         <br />
         <br />
         <Grid item container>
-          {this.state.assetOpen && <Asset />}
-          {this.state.analysisOpen && <Analysis />}
-          {this.state.profileOpen && (
-            <Profile name={this.props.name} onSubmit={this.changeAnalysis} />
-          )}
+          <Suspense fallback={<div>Loading...</div>}>
+            <Switch>
+              <Route exact path="/" component={Asset} />
+              <Route exact path="/asset" component={Asset} />
+              <Route exact path="/analysis" component={Analysis} />
+              <Route exact path="/profile" component={Profile} />
+            </Switch>
+          </Suspense>
         </Grid>
       </Grid>
     );

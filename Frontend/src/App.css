@@ -42,3 +42,11 @@
   align-items: center;
   justify-content: center;
 }
+
+.centerButton {
+  text-align: center;
+  margin: auto;
+  position: fixed;
+  display: flex;
+  display: grid;
+}

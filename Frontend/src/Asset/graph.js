@@ -124,6 +124,7 @@ class Graph extends Component {
           }}
           height="140"
           width="450"
+          //key={Math.random()}
         />
       </div>
     );

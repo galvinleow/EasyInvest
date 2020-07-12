@@ -2,17 +2,16 @@ import json
 
 # Max score for the formula
 max_score = 5.0
-data_shares_path = "/Users/zermainelew/Documents/orbital/Final_2020_07_08.json"
+data_shares_path = "C:\\Users\\galvi\\Galvin\\NUS Notes\\Orbital\\EasyInvest\\Crawler\\data\\final\\Final_2020_07_08.json"
 
 # Get data from crawler file
 with open(data_shares_path) as f:
     data = json.load(f)
 
-def if_ticker_exist(ticker_data): 
+def if_ticker_exist(ticker): 
     exist = True
-    for ticker in ticker_data:
-        if not (ticker.upper() in data):
-            exist = False
+    if not (ticker.upper() in data):
+        exist = False
     return exist
 
 def get_individual_stock_score(ticker):
@@ -25,13 +24,13 @@ def get_individual_stock_score(ticker):
                                           , upper_bound=0.07, lower_bound=0.04, max_value=0.05)
     roe_score = get_score_roe(ticker_data)
     pe_score = get_score_pe_ratio(ticker_data)
-    print(ticker_data)
 
     result["TICKER"] = ticker
     result["CURRENT RATIO"] = current_ratio_score
     result["DIVIDENDS YIELD"] = dividend_score
     result["RETURN ON EQUITY %"] = roe_score
     result["PE RATIO"] = pe_score
+    result["INDUSTRY"] = industry
     return result
 
 

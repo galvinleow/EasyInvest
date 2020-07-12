@@ -42,11 +42,11 @@ except:
         print("Error - Failed to create indices")
 
 try:
-    es.indices.create('shares')
-    print("[shares] indices created")
+    es.indices.create('watchlist')
+    print("[watchlist] indices created")
 except:
-    if es.indices.exists('shares'):
-        print("[shares] mapping already exists")
+    if es.indices.exists('watchlist'):
+        print("[watchlist] mapping already exists")
     else:
         print("Error - Failed to create indices")
 
@@ -195,21 +195,33 @@ def calculate_projected(user_uuid):
 def get_shares_information(ticker):
     return shares.get_individual_stock_score(ticker)
 
-@app.route('/addShares/<user_uuid>', methods=['POST'])
-def add_share(user_uuid):
-    json_data = request.json
-    return esMethod.add_update_share(client=es, index="shares", json_data=json_data, user_uuid=user_uuid)       
-
-@app.route('/deleteShares/<user_uuid>', methods=['POST'])
-def delete_share(user_uuid):
-    json_data = request.json
-    return esMethod.delete_share(client=es, index="shares", json_data=json_data, user_uuid=user_uuid) 
-
-# @app.route('/addRank/<user_uuid>', methods=['POST'])
-# def add_rank(user_uuid):
+# @app.route('/addShares/<user_uuid>', methods=['POST'])
+# def add_share(user_uuid):
 #     json_data = request.json
-#     return esMethod.add_update_share(client=es, index="rank", json_data=json_data, user_uuid=user_uuid) 
+#     return esMethod.add_update_share(client=es, index="shares", json_data=json_data, user_uuid=user_uuid)       
 
+# @app.route('/deleteShares/<user_uuid>', methods=['POST'])
+# def delete_share(user_uuid):
+#     json_data = request.json
+#     return esMethod.delete_share(client=es, index="shares", json_data=json_data, user_uuid=user_uuid) 
+
+@app.route('/rankAddEdit/<user_uuid>', methods=['POST'])
+def add_edit_rank(user_uuid):
+    json_data = request.json
+    return esMethod.add_edit_rank(client=es, index="rank", json_data=json_data, user_uuid=user_uuid) 
+
+@app.route('/addWatchlist/<user_uuid>/<ticker>', methods=['POST'])
+def add_watchlist(user_uuid, ticker):
+    # json_data = request.json
+    return esMethod.add_watchlist(client=es, index="watchlist", ticker=ticker, user_uuid=user_uuid) 
+
+@app.route('/deleteWatchlist/<user_uuid>/<ticker>', methods=['POST'])
+def delete_watchlist(user_uuid, ticker):
+    return esMethod.delete_watchlist(client=es, index="watchlist", ticker=ticker, user_uuid=user_uuid) 
+
+@app.route('/getWeightedScore/<user_uuid>', methods=['GET'])
+def get_score_with_rank(user_uuid):
+    return esMethod.get_score_with_rank(client=es, user_uuid=user_uuid) 
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5200)

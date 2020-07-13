@@ -1,4 +1,5 @@
 from datetime import datetime
+import os
 
 # Initializing elasticseach
 from elasticsearch import Elasticsearch
@@ -195,16 +196,6 @@ def calculate_projected(user_uuid):
 def get_shares_information(ticker):
     return shares.get_individual_stock_score(ticker)
 
-# @app.route('/addShares/<user_uuid>', methods=['POST'])
-# def add_share(user_uuid):
-#     json_data = request.json
-#     return esMethod.add_update_share(client=es, index="shares", json_data=json_data, user_uuid=user_uuid)       
-
-# @app.route('/deleteShares/<user_uuid>', methods=['POST'])
-# def delete_share(user_uuid):
-#     json_data = request.json
-#     return esMethod.delete_share(client=es, index="shares", json_data=json_data, user_uuid=user_uuid) 
-
 @app.route('/rankAddEdit/<user_uuid>', methods=['POST'])
 def add_edit_rank(user_uuid):
     json_data = request.json
@@ -222,6 +213,17 @@ def delete_watchlist(user_uuid, ticker):
 @app.route('/getWeightedScore/<user_uuid>', methods=['GET'])
 def get_score_with_rank(user_uuid):
     return esMethod.get_score_with_rank(client=es, user_uuid=user_uuid) 
+
+@app.route('/getFinancialData/<user_uuid>', methods=['GET'])
+def get_financial_data(user_uuid):
+    return esMethod.get_financial_data(client=es, user_uuid=user_uuid)
+
+# @app.route('/run', methods=['GET'])
+# def run():
+#     print(os.system("cd ..\\Crawler\\src\\main\\java"))
+#     # print(os.system("dir"))
+   
+#     return "ok"
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5200)

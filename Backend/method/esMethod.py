@@ -360,58 +360,6 @@ def calculate_projected(client, user_uuid):
     return history_data
 
 ################################### Start of Investment Analysis Method #####################################
-# def add_update_share(client, index, json_data, user_uuid):
-#     if shares.if_ticker_exist(json_data[index][0]):
-#         s = Search().using(client).index(index).query("match", _id=user_uuid)
-#         response = s.execute()
-#         if len(response.hits) > 0:
-#             for hit in response.hits:
-#                 # Get the asset list
-#                 shares_data = hit.to_dict()[index]
-#                 to_insert = json_data[index][0]
-#                 for element in shares_data:
-#                     if element["ticker"].upper() == to_insert['ticker'].upper():
-#                         shares_data.append(json_key_upper_case(to_insert))
-            # doc_update = {
-            #     "doc": {
-            #     }
-            # }
-            # doc_update['doc'][index] = shares_data
-#             client.update(index=index, doc_type='_doc', id=user_uuid, body=doc_update, refresh=True)
-#             return "Added Sharers with UUID tag: [" + index + "] & [" + user_uuid + "]"
-#         else:
-#             json_data[index][0] = json_key_upper_case(json_data[index][0])
-#             create_with_uuid(client=client, index=index, json_data=json_data, uuid=user_uuid)
-#             return "Created and Added Shares with UUID tag: [" + index + "] & [" + user_uuid + "]"
-#     else: 
-#         return "Error - Currently do not support this ticker"
-
-# def delete_share(client, index, json_data, user_uuid):
-#     # Get the doc that store the asset data using UUID
-#     data = client.get(index=index, doc_type="_doc", id=user_uuid)["_source"]
-#     # Get the asset list
-#     shares_list = data["shares"][0]
-
-#     to_delete = json_data["shares"][0]
-#     delete_acheived = True
-#     for element in to_delete:
-#         if element.upper() in shares_list:
-#             del shares_list[element.upper()]
-#             print("[" + element.upper() + "] have been deleted")
-#         else:
-#             delete_acheived = False
-    
-#     if delete_acheived:
-#         doc_update = {
-#             "doc": {
-#             }
-#         }
-#         doc_update['doc']['shares'] = [shares_list]
-#         client.update(index=index, doc_type="_doc", id=user_uuid, body=doc_update, refresh=True)
-#         return "Delete Asset with UUID: [" + index + "] index of UUID [" + user_uuid + "]"
-#     else:
-#         return "Error - All/Some Fail Delete Asset UUID (Asset does not exist): [" + index + "] index of UUID [" + user_uuid + "]"
-
 def add_edit_rank(client, index, json_data, user_uuid):
     s = Search().using(client).index(index).query("match", _id=user_uuid)
     response = s.execute()
@@ -434,14 +382,17 @@ def add_watchlist(client, index, ticker, user_uuid):
         if len(response.hits) > 0:
             for hit in response.hits:
                 watchlist_arr = hit.to_dict()[index]
-            watchlist_arr.append(ticker.upper())
-            doc_update = {
-                "doc": {
+            if ticker.upper() in watchlist_arr:
+                return "Error - Ticker already exist in watchlist: [" + index + "] & [" + user_uuid + "]"
+            else:
+                watchlist_arr.append(ticker.upper())
+                doc_update = {
+                    "doc": {
+                    }
                 }
-            }
-            doc_update['doc'][index] = watchlist_arr
-            client.update(index=index, doc_type='_doc', id=user_uuid, body=doc_update, refresh=True)
-            return "Added Watchlist with UUID tag: [" + index + "] & [" + user_uuid + "]"
+                doc_update['doc'][index] = watchlist_arr
+                client.update(index=index, doc_type='_doc', id=user_uuid, body=doc_update, refresh=True)
+                return "Added Watchlist with UUID tag: [" + index + "] & [" + user_uuid + "]"
         else:
             json_data = { index: [ticker]}
             create_with_uuid(client=client, index=index, json_data=json_data, uuid=user_uuid)
@@ -496,7 +447,6 @@ def get_score_with_rank(client, user_uuid):
             total_score = 0
             total_weightage = 0
             for (k,v) in rank_data.items():
-                # if not ("bank" in indiv_score["INDUSTRY"].lower()) and k == "CURRENT RATIO":
                 if k == "CURRENT RATIO":
                     if "bank" in indiv_score["INDUSTRY"].lower():
                         continue
@@ -509,3 +459,19 @@ def get_score_with_rank(client, user_uuid):
             indiv_score["SCORE LIMIT"] = total_weightage * 5 
             result["watchlist"].append(indiv_score)
         return result
+
+def get_financial_data(client, user_uuid):
+    watchlist_result = helper(client, "watchlist", user_uuid)
+    if type (watchlist_result) == str:
+        return "Error - Fail to Get Score (watchlist) UUID: index of UUID [" + user_uuid + "]" 
+    else:
+        today = date.today()
+        # Today month/year datetime
+        str_today = str(today.year) + "_" + today.strftime("%m") + "_" + str(today.day)
+        # data = shares.read_financial_data_file("..\\Crawler\\data\\final\\Final_" + str_today + ".json")
+        data = shares.read_financial_data_file("..\\Crawler\\data\\final\\Final_2020_07_12.json")
+        watchlist_arr = watchlist_result["watchlist"]
+        result = {}
+        for ticker in watchlist_arr:
+            result[ticker] = data[ticker]
+    return result

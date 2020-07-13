@@ -2,36 +2,44 @@ import json
 
 # Max score for the formula
 max_score = 5.0
-data_shares_path = "C:\\Users\\galvi\\Galvin\\NUS Notes\\Orbital\\EasyInvest\\Crawler\\data\\final\\Final_2020_07_08.json"
+data_shares_path = "..\\Crawler\\data\\final\\Final_2020_07_08.json"
 
 # Get data from crawler file
-with open(data_shares_path) as f:
-    data = json.load(f)
+def read_financial_data_file(path):
+    with open(path) as f:
+        data = json.load(f)
+    return data
 
 def if_ticker_exist(ticker): 
     exist = True
+    data = read_financial_data_file(data_shares_path)
     if not (ticker.upper() in data):
         exist = False
     return exist
 
 def get_individual_stock_score(ticker):
-    ticker_data = data[ticker]
-    industry = ticker_data["INDUSTRY"]
-    result = {}
-    current_ratio_score = get_score_with_range(share=ticker_data, indicator="CURRENT RATIO"
-                                               , upper_bound=2.0, lower_bound=1.2, max_value=2.0)
-    dividend_score = get_score_with_range(share=ticker_data, indicator="DIVIDENDS YIELD"
-                                          , upper_bound=0.07, lower_bound=0.04, max_value=0.05)
-    roe_score = get_score_roe(ticker_data)
-    pe_score = get_score_pe_ratio(ticker_data)
+    data = read_financial_data_file(data_shares_path)
+    if if_ticker_exist(ticker):
+        ticker = ticker.upper()
+        ticker_data = data[ticker]
+        industry = ticker_data["INDUSTRY"]
+        result = {}
+        current_ratio_score = get_score_with_range(share=ticker_data, indicator="CURRENT RATIO"
+                                                , upper_bound=2.0, lower_bound=1.2, max_value=2.0)
+        dividend_score = get_score_with_range(share=ticker_data, indicator="DIVIDENDS YIELD"
+                                            , upper_bound=0.07, lower_bound=0.04, max_value=0.05)
+        roe_score = get_score_roe(ticker_data)
+        pe_score = get_score_pe_ratio(ticker_data)
 
-    result["TICKER"] = ticker
-    result["CURRENT RATIO"] = current_ratio_score
-    result["DIVIDENDS YIELD"] = dividend_score
-    result["RETURN ON EQUITY %"] = roe_score
-    result["PE RATIO"] = pe_score
-    result["INDUSTRY"] = industry
-    return result
+        result["TICKER"] = ticker
+        result["CURRENT RATIO"] = current_ratio_score
+        result["DIVIDENDS YIELD"] = dividend_score
+        result["RETURN ON EQUITY %"] = roe_score
+        result["PE RATIO"] = pe_score
+        result["INDUSTRY"] = industry
+        return result
+    else:
+        return "Error - Currently do not support this ticker: " + ticker
 
 
 def get_score_with_range(share, indicator, upper_bound, lower_bound, max_value):

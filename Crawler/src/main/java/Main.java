@@ -107,9 +107,6 @@ public class Main {
                 wait(2000);
             }
         });
-//        System.out.println(database);
-//        database.entrySet().forEach(System.out::println);
-//        JSONObject jsonData = new JSONObject(database);
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy_MM_dd");
         LocalDate localDate = LocalDate.now();
         writeJsonToFile(database, path + "final\\" + "Final_" + dtf.format(localDate) + ".json");

@@ -6,6 +6,7 @@ from elasticsearch_dsl import Search
 
 from method import shares
 
+
 # Create new indices
 def create_new_indices(client, index):
     try:
@@ -99,6 +100,7 @@ def get_days_in_a_month(month, year):
 def convert_full_date_to_month_year(date):
     str_month_year = str(date.month) + "/" + str(date.year)
     return datetime.strptime(str_month_year, "%m/%Y")
+
 
 def json_key_upper_case(json):
     upper_case = {}
@@ -359,6 +361,7 @@ def calculate_projected(client, user_uuid):
         asset["amount"] = result
     return history_data
 
+
 ################################### Start of Investment Analysis Method #####################################
 def add_edit_rank(client, index, json_data, user_uuid):
     s = Search().using(client).index(index).query("match", _id=user_uuid)
@@ -374,6 +377,7 @@ def add_edit_rank(client, index, json_data, user_uuid):
     else:
         create_with_uuid(client=client, index=index, json_data=json_data, uuid=user_uuid)
         return "Created and Added Rank with UUID tag: [" + index + "] & [" + user_uuid + "]"
+
 
 def add_watchlist(client, index, ticker, user_uuid):
     if shares.if_ticker_exist(ticker.upper()):
@@ -394,31 +398,33 @@ def add_watchlist(client, index, ticker, user_uuid):
                 client.update(index=index, doc_type='_doc', id=user_uuid, body=doc_update, refresh=True)
                 return "Added Watchlist with UUID tag: [" + index + "] & [" + user_uuid + "]"
         else:
-            json_data = { index: [ticker]}
+            json_data = {index: [ticker]}
             create_with_uuid(client=client, index=index, json_data=json_data, uuid=user_uuid)
             return "Created Watchlist with UUID tag: [" + index + "] & [" + user_uuid + "]"
     else:
         return "Error - Currently do not support this ticker"
 
+
 def delete_watchlist(client, index, ticker, user_uuid):
-        s = Search().using(client).index(index).query("match", _id=user_uuid)
-        response = s.execute()
-        if len(response.hits) > 0:
-            for hit in response.hits:
-                watchlist_arr = hit.to_dict()[index]
-            if ticker.upper() in watchlist_arr:
-                watchlist_arr.remove(ticker.upper())
-            else:
-                return "Error - Fail Delete Ticker UUID: [" + index + "] index of UUID [" + user_uuid + "]"
-            doc_update = {
-                "doc": {
-                }
-            }
-            doc_update['doc'][index] = watchlist_arr
-            client.update(index=index, doc_type='_doc', id=user_uuid, body=doc_update, refresh=True)
-            return "Delete Watchlist with UUID tag: [" + index + "] & [" + user_uuid + "]"
+    s = Search().using(client).index(index).query("match", _id=user_uuid)
+    response = s.execute()
+    if len(response.hits) > 0:
+        for hit in response.hits:
+            watchlist_arr = hit.to_dict()[index]
+        if ticker.upper() in watchlist_arr:
+            watchlist_arr.remove(ticker.upper())
         else:
-            return "Error - Fail Delete Watchlist UUID (Watchlist does not exist): [" + index + "] index of UUID [" + user_uuid + "]"
+            return "Error - Fail Delete Ticker UUID: [" + index + "] index of UUID [" + user_uuid + "]"
+        doc_update = {
+            "doc": {
+            }
+        }
+        doc_update['doc'][index] = watchlist_arr
+        client.update(index=index, doc_type='_doc', id=user_uuid, body=doc_update, refresh=True)
+        return "Delete Watchlist with UUID tag: [" + index + "] & [" + user_uuid + "]"
+    else:
+        return "Error - Fail Delete Watchlist UUID (Watchlist does not exist): [" + index + "] index of UUID [" + user_uuid + "]"
+
 
 def helper(client, index, user_uuid):
     s = Search().using(client).index(index).query("match", _id=user_uuid)
@@ -430,23 +436,24 @@ def helper(client, index, user_uuid):
     else:
         return "Error - Fail to retrieve data"
 
+
 def get_score_with_rank(client, user_uuid):
     rank_result = helper(client, "rank", user_uuid)
     watchlist_result = helper(client, "watchlist", user_uuid)
-    if type (rank_result) == str:
-        return "Error - Fail to Get Score (rank) UUID: index of UUID [" + user_uuid + "]" 
-    elif type (watchlist_result) == str:
-        return "Error - Fail to Get Score (watchlist) UUID: index of UUID [" + user_uuid + "]" 
+    if type(rank_result) == str:
+        return "Error - Fail to Get Score (rank) UUID: index of UUID [" + user_uuid + "]"
+    elif type(watchlist_result) == str:
+        return "Error - Fail to Get Score (watchlist) UUID: index of UUID [" + user_uuid + "]"
     else:
         rank_data = rank_result["rank"][0]
         watchlist_arr = watchlist_result["watchlist"]
-        result = {"watchlist" : []}
+        result = {"watchlist": []}
         for ticker in watchlist_arr:
             indiv_score = shares.get_individual_stock_score(ticker)
             result_score = {}
             total_score = 0
             total_weightage = 0
-            for (k,v) in rank_data.items():
+            for (k, v) in rank_data.items():
                 if k == "CURRENT RATIO":
                     if "bank" in indiv_score["INDUSTRY"].lower():
                         continue
@@ -456,20 +463,21 @@ def get_score_with_rank(client, user_uuid):
                 total_score += calculated
                 total_weightage += float(v)
             indiv_score["TOTAL SCORE %"] = total_score / (total_weightage * 5) * 100
-            indiv_score["SCORE LIMIT"] = total_weightage * 5 
+            indiv_score["SCORE LIMIT"] = total_weightage * 5
             result["watchlist"].append(indiv_score)
         return result
 
+
 def get_financial_data(client, user_uuid):
     watchlist_result = helper(client, "watchlist", user_uuid)
-    if type (watchlist_result) == str:
-        return "Error - Fail to Get Score (watchlist) UUID: index of UUID [" + user_uuid + "]" 
+    if type(watchlist_result) == str:
+        return "Error - Fail to Get Score (watchlist) UUID: index of UUID [" + user_uuid + "]"
     else:
         today = date.today()
         # Today month/year datetime
         str_today = str(today.year) + "_" + today.strftime("%m") + "_" + str(today.day)
-        # data = shares.read_financial_data_file("..\\Crawler\\data\\final\\Final_" + str_today + ".json")
-        data = shares.read_financial_data_file("..\\Crawler\\data\\final\\Final_2020_07_12.json")
+        data = shares.read_financial_data_file("..\\Crawler\\data\\final\\Final_" + str_today + ".json")
+        # data = shares.read_financial_data_file("..\\Crawler\\data\\final\\Final_2020_07_12.json")
         watchlist_arr = watchlist_result["watchlist"]
         result = {}
         for ticker in watchlist_arr:

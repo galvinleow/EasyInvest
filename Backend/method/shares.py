@@ -1,8 +1,13 @@
 import json
+from datetime import *
 
 # Max score for the formula
 max_score = 5.0
-data_shares_path = "..\\Crawler\\data\\final\\Final_2020_07_08.json"
+# Today month/year datetime
+today = date.today()
+str_today = str(today.year) + "_" + today.strftime("%m") + "_" + str(today.day)
+data_shares_path = "..\\Crawler\\data\\final\\Final_" + str_today + ".json"
+
 
 # Get data from crawler file
 def read_financial_data_file(path):
@@ -10,12 +15,14 @@ def read_financial_data_file(path):
         data = json.load(f)
     return data
 
-def if_ticker_exist(ticker): 
+
+def if_ticker_exist(ticker):
     exist = True
     data = read_financial_data_file(data_shares_path)
     if not (ticker.upper() in data):
         exist = False
     return exist
+
 
 def get_individual_stock_score(ticker):
     data = read_financial_data_file(data_shares_path)
@@ -25,9 +32,9 @@ def get_individual_stock_score(ticker):
         industry = ticker_data["INDUSTRY"]
         result = {}
         current_ratio_score = get_score_with_range(share=ticker_data, indicator="CURRENT RATIO"
-                                                , upper_bound=2.0, lower_bound=1.2, max_value=2.0)
+                                                   , upper_bound=2.0, lower_bound=1.2, max_value=2.0)
         dividend_score = get_score_with_range(share=ticker_data, indicator="DIVIDENDS YIELD"
-                                            , upper_bound=0.07, lower_bound=0.04, max_value=0.05)
+                                              , upper_bound=0.07, lower_bound=0.04, max_value=0.05)
         roe_score = get_score_roe(ticker_data)
         pe_score = get_score_pe_ratio(ticker_data)
 

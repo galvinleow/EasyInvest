@@ -1,5 +1,5 @@
+import subprocess
 from datetime import datetime
-import os
 
 # Initializing elasticseach
 from elasticsearch import Elasticsearch
@@ -23,42 +23,21 @@ bcrypt = Bcrypt(app)
 jwt = JWTManager(app)
 CORS(app)
 
+indices_arr = ["user", "asset", "watchlist", "rank"]
 # Create Database Indices upon first app launch
-try:
-    es.indices.create('user')
-    print("[user] indices created")
-except:
-    if es.indices.exists('user'):
-        print("[user] mapping already exists")
-    else:
-        print("Error - Failed to create indices")
+for index in indices_arr:
+    try:
+        es.indices.create(index)
+        print("[" + index + "] indices created")
+    except:
+        if es.indices.exists(index):
+            print("[" + index + "] mapping already exists")
+        else:
+            print("Error - Failed to create indices")
 
-try:
-    es.indices.create('asset')
-    print("[asset] indices created")
-except:
-    if es.indices.exists('asset'):
-        print("[asset] mapping already exists")
-    else:
-        print("Error - Failed to create indices")
 
-try:
-    es.indices.create('watchlist')
-    print("[watchlist] indices created")
-except:
-    if es.indices.exists('watchlist'):
-        print("[watchlist] mapping already exists")
-    else:
-        print("Error - Failed to create indices")
-
-try:
-    es.indices.create('rank')
-    print("[rank] indices created")
-except:
-    if es.indices.exists('rank'):
-        print("[rank] mapping already exists")
-    else:
-        print("Error - Failed to create indices")
+# Run Crawler
+subprocess.call("run_crawler.sh", shell=True)
 
 
 # Start up of the flask backend
@@ -196,34 +175,39 @@ def calculate_projected(user_uuid):
 def get_shares_information(ticker):
     return shares.get_individual_stock_score(ticker)
 
+
 @app.route('/rankAddEdit/<user_uuid>', methods=['POST'])
 def add_edit_rank(user_uuid):
     json_data = request.json
-    return esMethod.add_edit_rank(client=es, index="rank", json_data=json_data, user_uuid=user_uuid) 
+    return esMethod.add_edit_rank(client=es, index="rank", json_data=json_data, user_uuid=user_uuid)
+
 
 @app.route('/addWatchlist/<user_uuid>/<ticker>', methods=['POST'])
 def add_watchlist(user_uuid, ticker):
     # json_data = request.json
-    return esMethod.add_watchlist(client=es, index="watchlist", ticker=ticker, user_uuid=user_uuid) 
+    return esMethod.add_watchlist(client=es, index="watchlist", ticker=ticker, user_uuid=user_uuid)
+
 
 @app.route('/deleteWatchlist/<user_uuid>/<ticker>', methods=['POST'])
 def delete_watchlist(user_uuid, ticker):
-    return esMethod.delete_watchlist(client=es, index="watchlist", ticker=ticker, user_uuid=user_uuid) 
+    return esMethod.delete_watchlist(client=es, index="watchlist", ticker=ticker, user_uuid=user_uuid)
+
 
 @app.route('/getWeightedScore/<user_uuid>', methods=['GET'])
 def get_score_with_rank(user_uuid):
-    return esMethod.get_score_with_rank(client=es, user_uuid=user_uuid) 
+    return esMethod.get_score_with_rank(client=es, user_uuid=user_uuid)
+
 
 @app.route('/getFinancialData/<user_uuid>', methods=['GET'])
 def get_financial_data(user_uuid):
     return esMethod.get_financial_data(client=es, user_uuid=user_uuid)
 
-# @app.route('/run', methods=['GET'])
-# def run():
-#     print(os.system("cd ..\\Crawler\\src\\main\\java"))
-#     # print(os.system("dir"))
-   
-#     return "ok"
+
+@app.route('/runCrawler', methods=['GET'])
+def run():
+    subprocess.call("run_crawler.sh", shell=True)
+    return "Run Crawler Carried Out"
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5200)

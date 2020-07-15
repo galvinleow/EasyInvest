@@ -34,42 +34,42 @@ export default function MenuAppBar(props) {
 
   return (
     <div className={classes.root}>
-        <AppBar position="static">
-          <Toolbar>
-            <Link to="/asset">
-              <Tooltip title="My Assets">
-                <IconButton>
-                  <AccountBalanceWalletIcon />
-                </IconButton>
-              </Tooltip>
-            </Link>
-            <Link to="/analysis">
-              <Tooltip title="Investment Analysis">
-                <IconButton>
-                  <AttachMoneyIcon />
-                </IconButton>
-              </Tooltip>
-            </Link>
-            <Typography variant="h6" className={classes.title}>
-              EasyInvest
-            </Typography>
+      <AppBar position="static">
+        <Toolbar>
+          <Link to="/asset">
+            <Tooltip title="My Assets">
+              <IconButton>
+                <AccountBalanceWalletIcon />
+              </IconButton>
+            </Tooltip>
+          </Link>
+          <Link to="/analysis">
+            <Tooltip title="Investment Analysis">
+              <IconButton>
+                <AttachMoneyIcon />
+              </IconButton>
+            </Tooltip>
+          </Link>
+          <Typography variant="h6" className={classes.title}>
+            EasyInvest
+          </Typography>
 
-            <div>
-              <Link to="/profile">
-                <Tooltip title="Profile">
-                  <IconButton>
-                    <AccountCircle />
-                  </IconButton>
-                </Tooltip>
-              </Link>
-              <Tooltip title="Log Out">
-                <IconButton aria-label="Log Out" onClick={handleLogout}>
-                  <ExitToAppIcon />
+          <div>
+            <Link to="/profile">
+              <Tooltip title="Profile">
+                <IconButton>
+                  <AccountCircle />
                 </IconButton>
               </Tooltip>
-            </div>
-          </Toolbar>
-        </AppBar>
+            </Link>
+            <Tooltip title="Log Out">
+              <IconButton aria-label="Log Out" onClick={handleLogout}>
+                <ExitToAppIcon />
+              </IconButton>
+            </Tooltip>
+          </div>
+        </Toolbar>
+      </AppBar>
     </div>
   );
 }

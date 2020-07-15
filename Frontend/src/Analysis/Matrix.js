@@ -13,6 +13,11 @@ import FirstPage from "@material-ui/icons/FirstPage";
 import LastPage from "@material-ui/icons/LastPage";
 import Remove from "@material-ui/icons/Remove";
 import ViewColumn from "@material-ui/icons/ViewColumn";
+import jwt_decode from "jwt-decode";
+ 
+const token = localStorage.getItem("usertoken");
+const decoded = jwt_decode(token);
+const uuid = decoded.identity.uuid;
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -75,33 +80,34 @@ class Table extends Component {
   }
 
   //get data from database
-  //   async componentDidMount() {
-  //     try {
-  //       let response = await fetch("getDataFromUUID/asset/" + this.props.id, {
-  //         method: "GET",
-  //       });
-  //       let responseJson = await response.json();
+  async componentDidMount() {
+    try {
+      let response = await fetch("/getWeightedScore/" + uuid, {
+        method: "GET",
+      });
+      let responseJson = await response.json();
 
-  //       if (!responseJson.error) {
-  //         if (responseJson.asset.length) {
-  //           const newAssets = responseJson.asset.map((asset) => {
-  //             return {
-  //               name: asset.name,
-  //               interest: asset.rate,
-  //               value: asset.amount[0].value,
-  //               uuid: asset.uuid,
-  //               date: asset.amount[0].date,
-  //             };
-  //           });
-  //           this.setState({ data: newAssets });
-  //         }
-  //       } else {
-  //         console("Cant Connect to Server");
-  //       }
-  //     } catch (err) {
-  //       console.warn(err);
-  //     }
-  //   }
+      if (!responseJson.error) {
+        if (responseJson.watchlist.length) {
+          const newShares = responseJson.watchlist.map((share) => {
+            return {
+              name: share.TICKER,
+              CR: share["CURRENT RATIO SCORE"],
+              ROE: share["RETURN ON EQUITY % SCORE"],
+              Dividend: share["DIVIDENDS YIELD SCORE"],
+              EPS: share["PE RATIO SCORE"],
+              Score: share["TOTAL SCORE %"],
+            };
+          });
+          this.setState({ data: newShares });
+        }
+      } else {
+        console("Cant Connect to Server");
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  }
 
   render() {
     return (

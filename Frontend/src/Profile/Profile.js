@@ -4,6 +4,11 @@ import { Grid, Button } from "@material-ui/core";
 import "../App.css";
 import HelpIcon from "@material-ui/icons/Help";
 import Tooltip from "@material-ui/core/Tooltip";
+import jwt_decode from "jwt-decode";
+
+const token = localStorage.getItem("usertoken");
+const decoded = jwt_decode(token);
+const uuid = decoded.identity.uuid;
 
 class Profile extends Component {
   constructor(props) {
@@ -31,10 +36,32 @@ class Profile extends Component {
   }
 
   handleSubmit() {
-    console.log(this.state);
     alert("Ranks updated!");
-    //this.props.onSubmit();
     //get final rankings
+    var raw = {
+      rank: [
+        {
+          "DIVIDENDS YIELD": this.state.Dividend,
+          "CURRENT RATIO": this.state.current,
+          "PE RATIO": this.state.EPS,
+          "RETURN ON EQUITY %": this.state.ROE,
+        },
+      ],
+    };
+
+    const requestOptions = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(raw),
+      redirect: "follow",
+    };
+
+    fetch("/rankAddEdit/" + uuid, requestOptions)
+      .then((response) => response.text())
+      .then((result) => console.log(result))
+      .catch((error) => console.log("error", error));
   }
 
   render() {

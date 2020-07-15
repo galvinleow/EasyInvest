@@ -6,62 +6,85 @@ import "../App.css";
 import Matrix from "./Matrix.js";
 import Form from "./Form.js";
 import { Link } from "react-router-dom";
+import jwt_decode from "jwt-decode";
+
+const token = localStorage.getItem("usertoken");
+const decoded = jwt_decode(token);
+const uuid = decoded.identity.uuid;
 
 export class Analysis extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      ranks: {
-        current: 3,
-        ROE: 3,
-        dividend: 3,
-        EPS: 3,
-      },
       refresh: 0,
+      ranks: [],
     };
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.update = this.update.bind(this);
   }
 
-  handleSubmit(name, amount) {
-   //add shares to database
-    var raw = {
-      shares: [
-        {
-          name: name,
-          amount: amount,
-        },
-      ],
-    };
+  async componentDidMount() {
+    try {
+      let response = await fetch("getDataFromUUID/rank/" + uuid, {
+        method: "GET",
+      });
+      let responseJson = await response.json();
 
+      if (!responseJson.error) {
+        if (responseJson.rank.length) {
+          const newRanks = responseJson.rank.map((ratio) => {
+            return {
+              current: ratio["CURRENT RATIO"],
+              ROE: ratio["RETURN ON EQUITY %"],
+              dividend: ratio["DIVIDENDS YIELD"],
+              EPS: ratio["PE RATIO"],
+            };
+          });
+          this.setState({ ranks: newRanks });
+          console.log(this.state.ranks[0]);
+        }
+      } else {
+        console("Cant Connect to Server");
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  }
+
+  handleSubmit(name) {
+    //add shares to database
     var requestOptions = {
       method: "POST",
-      body: raw,
+      //body: raw,
       redirect: "follow",
     };
 
-    fetch("/addShares/" + this.props.id, requestOptions)
+    fetch("/addWatchlist/" + uuid + "/" + name, requestOptions)
       .then((response) => response.text())
       .then((result) => console.log(result))
       .catch((error) => console.log("error", error));
-    
 
     this.setState({ refresh: 5 });
+  }
+
+  update() {
+    this.setState({ refresh: 7 });
   }
 
   render() {
     return (
       <Grid container direction="column">
         <Grid item container>
-          <Grid item md={3} sm={1} />
+          <Grid item md={3} sm={0} />
           <Grid item md={6} sm={12} className="centerGrid">
-            <Form onSubmit={this.handleSubmit} />
+            <Form key={this.state.refresh} onSubmit={this.handleSubmit} />
           </Grid>
-          <Grid item md={3} sm={1} />
+          <Grid item md={3} sm={0} />
         </Grid>
 
         <Grid item container>
-          <Grid item md={1} sm={1} />
-          <Grid item md={3}>
+          <Grid item md={1} sm={0} />
+          <Grid item md={3} sm={1} xs={0}>
             <Tooltip
               title={"Current Ratio (Rank: " + this.state.ranks.current + ")"}
               string="Measures the company’s ability to pay off short-term liabilities with current assets"
@@ -86,17 +109,17 @@ export class Analysis extends Component {
             </Link>
           </Grid>
           <Grid item md={7} sm={10} xs={12} className="centerGrid">
-            <Table refresh={this.state.refresh} />
+            <Table key={this.state.refresh} update={this.update} />
           </Grid>
-          <Grid item md={1} sm={1}></Grid>
+          <Grid item md={1} sm={1} xs={0}></Grid>
         </Grid>
 
         <Grid item container>
-          <Grid item md={1} sm={1}></Grid>
-          <Grid item md={10} sm={10} xs={12}>
-            <Matrix refresh={this.state.refresh} />
+          <Grid item md={1} sm={0}></Grid>
+          <Grid item md={10} sm={12}>
+            <Matrix key={this.state.refresh} />
           </Grid>
-          <Grid item md={1} sm={1}></Grid>
+          <Grid item md={1} sm={0}></Grid>
         </Grid>
       </Grid>
     );

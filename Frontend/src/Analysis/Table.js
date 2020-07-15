@@ -13,6 +13,11 @@ import FirstPage from "@material-ui/icons/FirstPage";
 import LastPage from "@material-ui/icons/LastPage";
 import Remove from "@material-ui/icons/Remove";
 import ViewColumn from "@material-ui/icons/ViewColumn";
+import jwt_decode from "jwt-decode";
+
+const token = localStorage.getItem("usertoken");
+const decoded = jwt_decode(token);
+const uuid = decoded.identity.uuid;
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -57,46 +62,38 @@ class Table extends Component {
           type: "numeric",
         },
       ],
-      data: [
-        {
-          name: "Amazon",
-          CR: 1.08,
-          ROE: 18.58,
-          Dividend: 23.18,
-          EPS: 0.13,
-        },
-      ],
+      data: [],
     };
   }
 
   //data from database
-  //   async componentDidMount() {
-  //     try {
-  //       let response = await fetch("getDataFromUUID/asset/" + this.props.id, {
-  //         method: "GET",
-  //       });
-  //       let responseJson = await response.json();
+  async componentDidMount() {
+    try {
+      let response = await fetch("/getWeightedScore/" + uuid, {
+        method: "GET",
+      });
+      let responseJson = await response.json();
 
-  //       if (!responseJson.error) {
-  //         if (responseJson.asset.length) {
-  //           const newAssets = responseJson.asset.map((asset) => {
-  //             return {
-  //               name: asset.name,
-  //               interest: asset.rate,
-  //               value: asset.amount[0].value,
-  //               uuid: asset.uuid,
-  //               date: asset.amount[0].date,
-  //             };
-  //           });
-  //           this.setState({ data: newAssets });
-  //         }
-  //       } else {
-  //         console("Cant Connect to Server");
-  //       }
-  //     } catch (err) {
-  //       console.warn(err);
-  //     }
-  //   }
+      if (!responseJson.error) {
+        if (responseJson.watchlist.length) {
+          const newShares = responseJson.watchlist.map((share) => {
+            return {
+              name: share.TICKER,
+              CR: share["CURRENT RATIO"],
+              ROE: share["RETURN ON EQUITY %"],
+              Dividend: share["DIVIDENDS YIELD"],
+              EPS: share["PE RATIO"],
+            };
+          });
+          this.setState({ data: newShares });
+        }
+      } else {
+        console("Cant Connect to Server");
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  }
 
   render() {
     return (
@@ -122,42 +119,26 @@ class Table extends Component {
               setTimeout(() => {
                 resolve();
                 //to get deleted row after clicking delete -> save
-                // var raw = {
-                //   asset: [
-                //     {
-                //       amount: [
-                //         {
-                //           date: oldData.date,
-                //           value: oldData.value,
-                //         },
-                //       ],
-                //       name: oldData.name,
-                //       rate: oldData.interest,
-                //       type: "saving",
-                //       uuid: oldData.uuid,
-                //     },
-                //   ],
-                // };
+                var requestOptions = {
+                  method: "POST",
+                  redirect: "follow",
+                };
 
-                // var requestOptions = {
-                //   method: "POST",
-                //   headers: {
-                //     "Content-Type": "application/json",
-                //   },
-                //   body: JSON.stringify(raw),
-                //   redirect: "follow",
-                // };
-
-                // fetch("/deleteAsset/" + this.props.id, requestOptions)
-                //   .then((response) => response.text())
-                //   .then((result) => console.log(result))
-                //   .catch((error) => console.log("error", error));
+                fetch(
+                  "/deleteWatchlist/" + uuid + "/" + oldData.name,
+                  requestOptions
+                )
+                  .then((response) => response.text())
+                  .then((result) => console.log(result))
+                  .catch((error) => console.log("error", error));
 
                 this.setState((prevState) => {
                   const data = [...prevState.data];
                   data.splice(data.indexOf(oldData), 1);
                   return { ...prevState, data };
                 });
+
+                this.props.update();
               }, 600);
             }),
         }}

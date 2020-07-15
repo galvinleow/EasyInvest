@@ -2,6 +2,11 @@ import React from "react";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import { withStyles } from "@material-ui/core/styles";
+import jwt_decode from "jwt-decode";
+
+const token = localStorage.getItem("usertoken");
+const decoded = jwt_decode(token);
+const uuid = decoded.identity.uuid;
 
 const useStyles = (theme) => ({
   root: {
@@ -17,10 +22,8 @@ class Form extends React.Component {
     super(props);
     this.state = {
       name: "",
-      amount: 0,
     };
     this.handleNameChange = this.handleNameChange.bind(this);
-    this.handleAmountChange = this.handleAmountChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
@@ -28,14 +31,25 @@ class Form extends React.Component {
     this.setState({ name: e.target.value });
   }
 
-  handleAmountChange(e) {
-    this.setState({ amount: e.target.value });
+  handleSubmit() {
+    //this.props.onSubmit(this.state.name);
+    //get finalised name and amount
+    //var raw = "";
+
+    // var requestOptions = {
+    //   method: "POST",
+    //   //body: raw,
+    //   redirect: "follow",
+    // };
+
+    // fetch("/addWatchlist/" + uuid + "/" + this.state.name, requestOptions)
+    //   .then((response) => response.text())
+    //   .then((result) => console.log(result))
+    //   .catch((error) => console.log("error", error));
+
+    this.props.onSubmit(this.state.name);
   }
 
-  handleSubmit() {
-    this.props.onSubmit(this.state.name, this.state.amount);
-    //get finalised name and amount
-  }
   render() {
     const { classes } = this.props;
     return (

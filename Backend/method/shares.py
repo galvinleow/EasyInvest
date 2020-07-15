@@ -6,8 +6,7 @@ max_score = 5.0
 # Today month/year datetime
 today = date.today()
 str_today = str(today.year) + "_" + today.strftime("%m") + "_" + str(today.day)
-data_shares_path = "..\\Crawler\\data\\final\\Final_" + str_today + ".json"
-
+data_shares_path = "/Users/zermainelew/Documents/orbital/Crawler/data/final/Final_" + str_today + ".json"
 
 # Get data from crawler file
 def read_financial_data_file(path):

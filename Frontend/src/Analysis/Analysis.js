@@ -92,9 +92,9 @@ export class Analysis extends Component {
           <Grid item md={3} sm={0} />
         </Grid>
 
-        <Grid item container>
+        <Grid item container align="center">
           <Grid item md={1} sm={0} />
-          <Grid item md={3} sm={1} xs={0}>
+          <Grid item md={3} sm={2} xs={0}>
             <Tooltip
               title={"Current Ratio (Rank: " + this.state.current + ")"}
               string="Measures the company’s ability to pay off short-term liabilities with current assets"
@@ -113,7 +113,7 @@ export class Analysis extends Component {
               string="Measures the amount of net income earned for each share outstanding"
             />
             <Link to="/profile" style={{ textDecoration: "none" }}>
-              <Button variant="contained" color="primary">
+              <Button variant="contained" color="primary" size="medium">
                 Modify Ranks
               </Button>
             </Link>
@@ -121,7 +121,7 @@ export class Analysis extends Component {
           <Grid item md={7} sm={10} xs={12} className="centerGrid">
             <Table key={this.state.refresh} update={this.update} />
           </Grid>
-          <Grid item md={1} sm={1} xs={0}></Grid>
+          <Grid item md={1} sm={0} xs={0}></Grid>
         </Grid>
 
         <Grid item container>

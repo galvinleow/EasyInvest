@@ -83,7 +83,7 @@ class Profile extends Component {
             handleChange={this.handleCurrentChange}
           />
         </Grid>
-        <Grid item md="1" className="centerGrid">
+        <Grid item md="1">
           <Tooltip title="Current Ratio measures the company’s ability to pay off short-term liabilities with current assets">
             <HelpIcon />
           </Tooltip>
@@ -99,7 +99,7 @@ class Profile extends Component {
             handleChange={this.handleROEChange}
           />
         </Grid>
-        <Grid item md="1" className="centerGrid">
+        <Grid item md="1">
           <Tooltip title="Return on Equity measures how efficiently a company is using its equity to generate profit">
             <HelpIcon />
           </Tooltip>
@@ -114,7 +114,7 @@ class Profile extends Component {
             handleChange={this.handleDividendChange}
           />
         </Grid>
-        <Grid item md="1" className="centerGrid">
+        <Grid item md="1">
           <Tooltip title="Dividend Yield measures the amount of dividends attributed to shareholders relative to the market value per share">
             <HelpIcon />
           </Tooltip>
@@ -129,7 +129,7 @@ class Profile extends Component {
             handleChange={this.handleEPSChange}
           />
         </Grid>
-        <Grid item md="1" className="centerGrid">
+        <Grid item md="1">
           <Tooltip title="Earnings per Share measures the amount of net income earned for each share outstanding">
             <HelpIcon />
           </Tooltip>
@@ -137,8 +137,8 @@ class Profile extends Component {
         <Grid item md="2"></Grid>
 
         <Grid item md="5"></Grid>
-        <div className="centerGrid">
-          <Grid item md="2">
+        <div>
+          <Grid item md="2" className="centerButton">
             <Button
               variant="contained"
               color="primary"

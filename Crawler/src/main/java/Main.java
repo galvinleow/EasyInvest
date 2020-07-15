@@ -15,7 +15,8 @@ import java.util.Map;
 
 public class Main {
     // Change path to whatever directory you want
-    private static final String path = "C:\\Users\\galvi\\Galvin\\NUS Notes\\Orbital\\EasyInvest\\Crawler\\data\\";
+//    private static final String path = "C:\\Users\\galvi\\Galvin\\NUS Notes\\Orbital\\EasyInvest\\Crawler\\data\\";
+    private static final String path = "data/";
     private static ArrayList<String> info = new ArrayList<>();
     private static final String authCodeSohGalvin = "33038b227dmsh4e44edf84b14d47p1e5400jsn859fb81ac0ae";
     private static final String authCodeGalvinNus = "7a26119401msh1d91946acab6401p141e1bjsn6d72c64726fa";
@@ -37,11 +38,17 @@ public class Main {
         tickerArr.add("BMRC");
         micTickMap.put("XNAS", tickerArr);
 
+        tickerArr = new ArrayList<>();
+        tickerArr.add("AIR");
+        micTickMap.put("XNZE", tickerArr);
 
         tickerArr = new ArrayList<>();
         tickerArr.add("D05");
         tickerArr.add("O39");
         tickerArr.add("S59");
+        tickerArr.add("AWX");
+        tickerArr.add("C6L");
+        tickerArr.add("Z74");
         micTickMap.put("XSES", tickerArr);
 
         // Hit API to get data
@@ -97,11 +104,17 @@ public class Main {
                 txtToDataProfile(path + ticker + "Profile.txt", individualData);
 
                 // Calculate Dividend Yield based on "live" data
-                double dividendYield = (individualData.getDouble("DIVIDENDS") * 4)
-                        / individualData.getDouble("LATEST SHARE PRICE");
+                double dividendYield = 0.0;
+                if (individualData.getDouble("LATEST SHARE PRICE") != 0) {
+                    dividendYield = (individualData.getDouble("DIVIDENDS") * 4)
+                            / individualData.getDouble("LATEST SHARE PRICE");
+                }
                 individualData.put("DIVIDENDS YIELD", dividendYield);
-                double peRatio = individualData.getDouble("LATEST SHARE PRICE")
-                        / individualData.getDouble("EPS %");
+                double peRatio = 0.0;
+                if (individualData.getDouble("EPS %") != 0) {
+                    peRatio = individualData.getDouble("LATEST SHARE PRICE")
+                            / individualData.getDouble("EPS %");
+                }
                 individualData.put("PE RATIO", peRatio);
                 database.put(ticker, individualData);
                 wait(2000);

@@ -39,7 +39,7 @@ export default function DiscreteSlider(props) {
   const classes = useStyles();
 
   const handleChange = (e, value) => {
-    props.handleChange(e.target.id, value);
+    props.handleChange(value);
   };
   return (
     <div className={classes.root}>

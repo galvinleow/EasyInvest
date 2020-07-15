@@ -14,29 +14,37 @@ class Profile extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      current: 3,
-      ROE: 3,
-      Dividend: 3,
-      EPS: 3,
+      current: 1,
+      ROE: 1,
+      Dividend: 1,
+      EPS: 1,
     };
-    this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleCurrentChange = this.handleCurrentChange.bind(this);
+    this.handleDividendChange = this.handleDividendChange.bind(this);
+    this.handleEPSChange = this.handleEPSChange.bind(this);
+    this.handleROEChange = this.handleROEChange.bind(this);
   }
 
-  handleChange(type, value) {
-    if (type === "Current") {
-      this.setState({ current: value });
-    } else if (type === "ROE") {
-      this.setState({ ROE: value });
-    } else if (type === "Dividend") {
-      this.setState({ Dividend: value });
-    } else {
-      this.setState({ EPS: value });
-    }
+  handleCurrentChange(value) {
+    this.setState({ current: value });
+  }
+
+  handleROEChange(value) {
+    this.setState({ ROE: value });
+  }
+
+  handleDividendChange(value) {
+    this.setState({ Dividend: value });
+  }
+
+  handleEPSChange(value) {
+    this.setState({ EPS: value });
   }
 
   handleSubmit() {
     alert("Ranks updated!");
+    console.log(this.state);
     //get final rankings
     var raw = {
       rank: [
@@ -72,7 +80,7 @@ class Profile extends Component {
           <Slider
             string="Please rank Current Ratio (1 being the most important to you, 5 being the least important to you)"
             id="Current"
-            handleChange={this.handleChange}
+            handleChange={this.handleCurrentChange}
           />
         </Grid>
         <Grid item md="1" className="centerGrid">
@@ -88,7 +96,7 @@ class Profile extends Component {
           <Slider
             string="Please rank Return on Equity (1 being the most important to you, 5 being the least important to you)"
             id="ROE"
-            handleChange={this.handleChange}
+            handleChange={this.handleROEChange}
           />
         </Grid>
         <Grid item md="1" className="centerGrid">
@@ -103,7 +111,7 @@ class Profile extends Component {
           <Slider
             string="Please rank Dividend Yield (1 being the most important to you, 5 being the least important to you)"
             id="Dividend"
-            handleChange={this.handleChange}
+            handleChange={this.handleDividendChange}
           />
         </Grid>
         <Grid item md="1" className="centerGrid">
@@ -118,7 +126,7 @@ class Profile extends Component {
           <Slider
             string="Please rank Earnings per Share (1 being the most important to you, 5 being the least important to you)"
             id="EPS"
-            handleChange={this.handleChange}
+            handleChange={this.handleEPSChange}
           />
         </Grid>
         <Grid item md="1" className="centerGrid">
@@ -129,15 +137,17 @@ class Profile extends Component {
         <Grid item md="2"></Grid>
 
         <Grid item md="5"></Grid>
-        <Grid item md="2" className="centerGrid">
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={this.handleSubmit}
-          >
-            Confirm
-          </Button>
-        </Grid>
+        <div className="centerGrid">
+          <Grid item md="2">
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={this.handleSubmit}
+            >
+              Confirm
+            </Button>
+          </Grid>
+        </div>
         <Grid item md="5"></Grid>
       </Grid>
     );

@@ -76,7 +76,9 @@ export class Analysis extends Component {
       )
       .catch((error) => console.log("error", error));
 
-    this.setState({ refresh: this.state.refresh - 1 });
+    //this.setState({ refresh: this.state.refresh + 1 });
+    this.update();
+    //console.log(this.state.refresh);
   }
 
   update() {

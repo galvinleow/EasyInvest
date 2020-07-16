@@ -74,7 +74,7 @@ class Profile extends Component {
 
   render() {
     return (
-      <Grid container>
+      <Grid container align="center">
         <Grid item md="3"></Grid>
         <Grid item md="6" className="centerGrid">
           <Slider
@@ -137,17 +137,17 @@ class Profile extends Component {
         <Grid item md="2"></Grid>
 
         <Grid item md="5"></Grid>
-        <div>
-          <Grid item md="2" className="centerButton">
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={this.handleSubmit}
-            >
-              Confirm
-            </Button>
-          </Grid>
-        </div>
+
+        <Grid item md="2">
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={this.handleSubmit}
+          >
+            Confirm
+          </Button>
+        </Grid>
+
         <Grid item md="5"></Grid>
       </Grid>
     );

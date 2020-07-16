@@ -44,7 +44,10 @@ class Table extends Component {
     super(props);
     this.state = {
       columns: [
-        { title: "Share Name", field: "name" },
+        {
+          title: "Share Name",
+          field: "name",
+        },
         {
           title: "Current Ratio",
           field: "CR",

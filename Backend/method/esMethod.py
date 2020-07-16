@@ -447,21 +447,25 @@ def get_score_with_rank(client, user_uuid):
         result = {"watchlist": []}
         for ticker in watchlist_arr:
             indiv_score = shares.get_individual_stock_score(ticker)
-            result_score = {}
-            total_score = 0
-            total_weightage = 0
-            for (k, v) in rank_data.items():
-                if k == "CURRENT RATIO":
-                    if "bank" in indiv_score["INDUSTRY"].lower():
-                        continue
-                share_score = indiv_score[k]
-                calculated = float(v) * share_score
-                indiv_score[k + " SCORE"] = calculated
-                total_score += calculated
-                total_weightage += float(v)
-            indiv_score["TOTAL SCORE %"] = total_score / (total_weightage * 5) * 100
-            indiv_score["SCORE LIMIT"] = total_weightage * 5
-            result["watchlist"].append(indiv_score)
+            if indiv_score == "Error - Currently do not support this ticker: " + ticker:
+                return indiv_score
+            else:
+                result_score = {}
+                total_score = 0
+                total_weightage = 0
+                for (k, v) in rank_data.items():
+                    if k == "CURRENT RATIO":
+                        if "bank" in indiv_score["INDUSTRY"].lower():
+                            continue
+                    print(indiv_score)
+                    share_score = indiv_score[k]
+                    calculated = float(v) * share_score
+                    indiv_score[k + " SCORE"] = calculated
+                    total_score += calculated
+                    total_weightage += float(v)
+                indiv_score["TOTAL SCORE %"] = total_score / (total_weightage * 5) * 100
+                indiv_score["SCORE LIMIT"] = total_weightage * 5
+                result["watchlist"].append(indiv_score)
         return result
 
 

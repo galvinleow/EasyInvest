@@ -486,7 +486,9 @@ def get_financial_data(client, user_uuid):
             return data
         else:
             watchlist_arr = watchlist_result["watchlist"]
-            result = {}
+            result_arr = []
             for ticker in watchlist_arr:
-                result[ticker.upper()] = data[ticker.upper()]
-    return result
+                result = data[ticker.upper()]
+                result["TICKER"] = ticker.upper()
+                result_arr.append(result)
+    return {"data": (result_arr)}

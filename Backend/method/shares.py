@@ -6,13 +6,17 @@ max_score = 5.0
 # Today month/year datetime
 today = date.today()
 str_today = str(today.year) + "_" + today.strftime("%m") + "_" + str(today.day)
-data_shares_path = "/Users/zermainelew/Documents/orbital/Crawler/data/final/Final_" + str_today + ".json"
+data_shares_path = "..\\Crawler\\data\\final\\Final_" + str_today + ".json"
+
 
 # Get data from crawler file
 def read_financial_data_file(path):
-    with open(path) as f:
-        data = json.load(f)
-    return data
+    try:
+        with open(path) as f:
+            data = json.load(f)
+        return data
+    except:
+        return "Error - Could not find file"
 
 
 def if_ticker_exist(ticker):
@@ -52,10 +56,10 @@ def get_score_with_range(share, indicator, upper_bound, lower_bound, max_value):
     indicator_value = share[indicator]
     if indicator_value <= 0:
         return 0.0
-    elif indicator_value <= upper_bound and indicator_value >= lower_bound:
+    elif upper_bound >= indicator_value >= lower_bound:
         return max_score
     elif indicator_value < lower_bound:
-        return ((indicator_value / lower_bound) * max_score)
+        return (indicator_value / lower_bound) * max_score
     else:
         minus = ((indicator_value - upper_bound) / max_value) * max_score
         value = max_score - minus

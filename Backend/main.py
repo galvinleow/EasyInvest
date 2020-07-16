@@ -50,14 +50,12 @@ def start_up():
 # Create indices with input string index, ?index={value}
 @app.route("/createIndices/<index>", methods=["POST"])
 def create_indices(index):
-    # index = request.args.get("index")
     return esMethod.create_new_indices(client=es, index=index)
 
 
 # Delete indices with input string index, ?index={value}
 @app.route("/deleteIndices/<index>", methods=["POST"])
 def delete_indices(index):
-    # index = request.args.get("index")
     return esMethod.delete_indices(client=es, index=index)
 
 
@@ -93,7 +91,7 @@ def login():
     }
     print(arg_dict)
     hits = esMethod.search_exact_docs(client=es, index="user", arg_dict=arg_dict)
-    if (len(hits) == 0):
+    if len(hits) == 0:
         return "Error - Username not found"
     else:
         body = hits[0]["body"]
@@ -101,8 +99,7 @@ def login():
         if bcrypt.check_password_hash(to_check_password, password):
             access_token = create_access_token(identity={"email": body["email"], "uuid": hits[0]["uuid"]})
             print(type(access_token))
-            dic = {}
-            dic["token"] = access_token
+            dic = {"token": access_token}
             return dic
         else:
             return "Error - Invalid password"
@@ -118,19 +115,16 @@ def login():
 # Get all data from indices
 @app.route('/getAllFromIndices/<index>', methods=['GET'])
 def match_all_from_indices(index):
-    # index = request.args.get("index")
     return jsonify(esMethod.match_all_from_indices(client=es, index=index))
 
 
 # Get all data using UUID
 @app.route('/getDataFromUUID/<index>/<uuid>', methods=['GET'])
 def get_data_from_uuid(index, uuid):
-    # index = request.args.get("index")
-    # uuid = request.args.get("uuid")
     try:
         return es.get(index=index, doc_type="_doc", id=uuid)["_source"]
     except:
-        return ("Error - No data found")
+        return "Error - No data found"
 
 
 # Insert asset into database, with json body
@@ -144,7 +138,6 @@ def add_asset(user_uuid):
 # Insert asset from database, with json body
 @app.route('/deleteAsset/<user_uuid>', methods=['POST'])
 def delete_asset(user_uuid):
-    # user_uuid = request.args.get("user_uuid")
     json_data = request.json
     return esMethod.delete_asset(client=es, index="asset", json_data=json_data, user_uuid=user_uuid)
 
@@ -152,7 +145,6 @@ def delete_asset(user_uuid):
 # Update asset from database, with json body
 @app.route('/updateAsset/<user_uuid>', methods=['POST'])
 def update_asset(user_uuid):
-    # user_uuid = request.args.get("user_uuid")
     json_data = request.json
     return esMethod.update_asset(client=es, index="asset", json_data=json_data, user_uuid=user_uuid)
 
@@ -160,14 +152,12 @@ def update_asset(user_uuid):
 # Retrieve 1 year of history, does not update in database
 @app.route('/displayHistoryData/<user_uuid>', methods=['GET'])
 def display_history_data(user_uuid):
-    # user_uuid = request.args.get("user_uuid")
     return esMethod.display_history_data(client=es, index="asset", user_uuid=user_uuid)
 
 
 # Retrieve 1 year of history and 4 year of project value
 @app.route('/calculateProjected/<user_uuid>', methods=['GET'])
 def calculate_projected(user_uuid):
-    # user_uuid = request.args.get("user_uuid")
     return esMethod.calculate_projected(client=es, user_uuid=user_uuid)
 
 
@@ -184,7 +174,6 @@ def add_edit_rank(user_uuid):
 
 @app.route('/addWatchlist/<user_uuid>/<ticker>', methods=['POST'])
 def add_watchlist(user_uuid, ticker):
-    # json_data = request.json
     return esMethod.add_watchlist(client=es, index="watchlist", ticker=ticker, user_uuid=user_uuid)
 
 
@@ -204,7 +193,7 @@ def get_financial_data(user_uuid):
 
 
 @app.route('/runCrawler', methods=['GET'])
-def run():
+def run_crawler():
     subprocess.call("run_crawler.sh", shell=True)
     return "Run Crawler Carried Out"
 

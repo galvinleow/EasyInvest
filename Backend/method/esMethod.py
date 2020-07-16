@@ -258,7 +258,7 @@ def display_history_data(client, index, user_uuid):
     try:
         response = client.get(index=index, doc_type="_doc", id=user_uuid)["_source"]
     except:
-        return ("Error - No data found")
+        return "Error - No data found"
 
     asset_list = response["asset"]
     for asset in asset_list:
@@ -367,11 +367,8 @@ def add_edit_rank(client, index, json_data, user_uuid):
     s = Search().using(client).index(index).query("match", _id=user_uuid)
     response = s.execute()
     if len(response.hits) > 0:
-        doc_update = {
-            "doc": {
-            }
-        }
-        doc_update['doc'] = json_data
+        doc_update = {"doc": {
+        }, 'doc': json_data}
         client.update(index=index, doc_type='_doc', id=user_uuid, body=doc_update, refresh=True)
         return "Added/Edited Rank with UUID tag: [" + index + "] & [" + user_uuid + "]"
     else:
@@ -477,9 +474,11 @@ def get_financial_data(client, user_uuid):
         # Today month/year datetime
         str_today = str(today.year) + "_" + today.strftime("%m") + "_" + str(today.day)
         data = shares.read_financial_data_file("..\\Crawler\\data\\final\\Final_" + str_today + ".json")
-        # data = shares.read_financial_data_file("..\\Crawler\\data\\final\\Final_2020_07_12.json")
-        watchlist_arr = watchlist_result["watchlist"]
-        result = {}
-        for ticker in watchlist_arr:
-            result[ticker] = data[ticker]
+        if data == "Error - Could not find file":
+            return data
+        else:
+            watchlist_arr = watchlist_result["watchlist"]
+            result = {}
+            for ticker in watchlist_arr:
+                result[ticker.upper()] = data[ticker.upper()]
     return result

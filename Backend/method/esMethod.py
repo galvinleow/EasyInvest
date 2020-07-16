@@ -491,4 +491,4 @@ def get_financial_data(client, user_uuid):
                 result = data[ticker.upper()]
                 result["TICKER"] = ticker.upper()
                 result_arr.append(result)
-    return {"data": (result_arr)}
+    return {"data": result_arr}

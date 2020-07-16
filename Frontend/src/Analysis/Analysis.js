@@ -37,12 +37,6 @@ export class Analysis extends Component {
       if (!responseJson.error) {
         if (responseJson.rank.length) {
           responseJson.rank.map((ratio) => {
-            // return {
-            //   current: ratio["CURRENT RATIO"],
-            //   ROE: ratio["RETURN ON EQUITY %"],
-            //   dividend: ratio["DIVIDENDS YIELD"],
-            //   EPS: ratio["PE RATIO"],
-            // };
             this.setState({
               current: ratio["CURRENT RATIO"],
               ROE: ratio["RETURN ON EQUITY %"],
@@ -50,8 +44,6 @@ export class Analysis extends Component {
               EPS: ratio["PE RATIO"],
             });
           });
-          //this.setState({ ranks: newRanks });
-          //console.log(this.state.ranks);
         }
       } else {
         console("Cant Connect to Server");
@@ -65,7 +57,6 @@ export class Analysis extends Component {
     //add shares to database
     var requestOptions = {
       method: "POST",
-      //body: raw,
       redirect: "follow",
     };
 
@@ -74,11 +65,11 @@ export class Analysis extends Component {
       .then((result) => console.log(result))
       .catch((error) => console.log("error", error));
 
-    this.setState({ refresh: 5 });
+    this.setState({ refresh: this.state.refresh - 1 });
   }
 
   update() {
-    this.setState({ refresh: 7 });
+    this.setState({ refresh: this.state.refresh + 1 });
   }
 
   render() {

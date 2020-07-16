@@ -69,14 +69,14 @@ class Table extends Component {
   //data from database
   async componentDidMount() {
     try {
-      let response = await fetch("/getWeightedScore/" + uuid, {
+      let response = await fetch("/getFinancialData/" + uuid, {
         method: "GET",
       });
       let responseJson = await response.json();
 
       if (!responseJson.error) {
-        if (responseJson.watchlist.length) {
-          const newShares = responseJson.watchlist.map((share) => {
+        if (responseJson.data.length) {
+          const newShares = responseJson.data.map((share) => {
             return {
               name: share.TICKER,
               CR: share["CURRENT RATIO"],

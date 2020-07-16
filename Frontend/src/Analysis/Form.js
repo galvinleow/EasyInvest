@@ -2,11 +2,6 @@ import React from "react";
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
 import { withStyles } from "@material-ui/core/styles";
-import jwt_decode from "jwt-decode";
-
-const token = localStorage.getItem("usertoken");
-const decoded = jwt_decode(token);
-const uuid = decoded.identity.uuid;
 
 const useStyles = (theme) => ({
   root: {
@@ -32,21 +27,6 @@ class Form extends React.Component {
   }
 
   handleSubmit() {
-    //this.props.onSubmit(this.state.name);
-    //get finalised name and amount
-    //var raw = "";
-
-    // var requestOptions = {
-    //   method: "POST",
-    //   //body: raw,
-    //   redirect: "follow",
-    // };
-
-    // fetch("/addWatchlist/" + uuid + "/" + this.state.name, requestOptions)
-    //   .then((response) => response.text())
-    //   .then((result) => console.log(result))
-    //   .catch((error) => console.log("error", error));
-
     this.props.onSubmit(this.state.name);
   }
 

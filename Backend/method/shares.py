@@ -1,4 +1,5 @@
 import json
+import platform
 from datetime import *
 
 # Max score for the formula
@@ -6,7 +7,10 @@ max_score = 5.0
 # Today month/year datetime
 today = date.today()
 str_today = str(today.year) + "_" + today.strftime("%m") + "_" + str(today.day)
-data_shares_path = "..\\Crawler\\data\\final\\Final_" + str_today + ".json"
+if platform.system() != "Windows":
+    data_shares_path = "../Crawler/data/final/Final_" + str_today + ".json"
+else:
+    data_shares_path = "..\\Crawler\\data\\final\\Final_" + str_today + ".json"
 
 
 # Get data from crawler file

@@ -35,7 +35,6 @@ for index in indices_arr:
         else:
             print("Error - Failed to create indices")
 
-
 # Run Crawler
 subprocess.call("run_crawler.sh", shell=True)
 

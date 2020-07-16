@@ -62,7 +62,17 @@ export class Analysis extends Component {
 
     fetch("/addWatchlist/" + uuid + "/" + name, requestOptions)
       .then((response) => response.text())
-      .then((result) => console.log(result))
+      .then((result) =>
+        //console.log(result)
+        result ===
+        "Error - Ticker already exist in watchlist: [watchlist] & [" +
+          uuid +
+          "]"
+          ? alert("Share already exists!")
+          : result === "Error - Currently do not support this ticker"
+          ? alert("Currently do not support this ticker")
+          : console.log(result)
+      )
       .catch((error) => console.log("error", error));
 
     this.setState({ refresh: this.state.refresh - 1 });

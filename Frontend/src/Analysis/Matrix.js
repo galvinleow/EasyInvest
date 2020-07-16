@@ -14,7 +14,7 @@ import LastPage from "@material-ui/icons/LastPage";
 import Remove from "@material-ui/icons/Remove";
 import ViewColumn from "@material-ui/icons/ViewColumn";
 import jwt_decode from "jwt-decode";
- 
+
 const token = localStorage.getItem("usertoken");
 const decoded = jwt_decode(token);
 const uuid = decoded.identity.uuid;
@@ -67,15 +67,7 @@ class Table extends Component {
           type: "numeric",
         },
       ],
-      data: [
-        {
-          name: "Amazon",
-          CR: 1.08,
-          ROE: 18.58,
-          Dividend: 23.18,
-          EPS: 0.13,
-        },
-      ],
+      data: [],
     };
   }
 

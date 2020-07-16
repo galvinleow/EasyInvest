@@ -11,6 +11,7 @@ import jwt_decode from "jwt-decode";
 const token = localStorage.getItem("usertoken");
 const decoded = jwt_decode(token);
 const uuid = decoded.identity.uuid;
+console.log(uuid);
 
 export class Analysis extends Component {
   constructor(props) {

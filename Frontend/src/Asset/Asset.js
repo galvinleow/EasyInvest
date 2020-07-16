@@ -27,7 +27,7 @@ export default function Asset(props) {
   });
 
   const update = () => {
-    setState({ key: 5 });
+    setState({ key: state.key + 1 });
   };
 
   if (state.analysisOpen) {
@@ -45,7 +45,12 @@ export default function Asset(props) {
         <Grid item md={1}></Grid>
         <Grid item md={3} sm={1}></Grid>
         <Grid item md={6} sm={10} xs={12}>
-          <Table assets={state.assets} id={uuid} update={update} />
+          <Table
+            key={state.key}
+            assets={state.assets}
+            id={uuid}
+            update={update}
+          />
         </Grid>
         <Grid item md={3} sm={1}></Grid>
       </Grid>

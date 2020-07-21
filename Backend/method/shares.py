@@ -30,6 +30,16 @@ def if_ticker_exist(ticker):
         exist = False
     return exist
 
+def get_individual_stock_data(ticker):
+    if if_ticker_exist(ticker):
+        data = read_financial_data_file(data_shares_path)
+        if data == "Error - Could not find file":
+            return data
+        else:
+            ticker = ticker.upper()
+            return data[ticker]
+    else: 
+        return "Error - Do not have ticker"
 
 def get_individual_stock_score(ticker):
     data = read_financial_data_file(data_shares_path)

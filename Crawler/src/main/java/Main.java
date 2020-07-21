@@ -122,7 +122,7 @@ public class Main {
         });
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy_MM_dd");
         LocalDate localDate = LocalDate.now();
-        writeJsonToFile(database, path + "final\\" + "Final_" + dtf.format(localDate) + ".json");
+        writeJsonToFile(database, path + "final/" + "Final_" + dtf.format(localDate) + ".json");
     }
 
     private static void wait(int time) {
@@ -206,16 +206,6 @@ public class Main {
         JSONObject jsonIndustry = jsonResult.getJSONObject("industry");
         individualData.put("INDUSTRY", jsonIndustry.getString("value"));
         System.out.println(individualData);
-
-//        JSONArray jsonArray = jsonObject.getJSONArray("results");
-//        if (jsonArray.length() > 0) {
-//            JSONObject details = jsonArray.getJSONObject(0);
-//            if (individualData.containsKey("DIVIDENDS")) {
-//                individualData.replace("DIVIDENDS", details.getDouble("amount"));
-//            } else {
-//                individualData.put("DIVIDENDS", details.getDouble("amount"));
-//            }
-//        }
     }
 
     private static void txtToDataDividend(String path, JSONObject individualData) {

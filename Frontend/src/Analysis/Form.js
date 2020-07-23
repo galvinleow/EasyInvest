@@ -36,9 +36,9 @@ class Form extends React.Component {
       <form className={classes.root} autoComplete="off">
         <TextField
           id="share_name"
-          label="Share Name"
+          label="Share Ticker"
           onChange={this.handleNameChange}
-          helperText="eg.AAPL"
+          helperText="eg.AAPL, D05"
           variant="outlined"
           required
         ></TextField>

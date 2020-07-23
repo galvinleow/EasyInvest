@@ -78,7 +78,7 @@ class Profile extends Component {
         <Grid item md="3"></Grid>
         <Grid item md="6" className="centerGrid">
           <Slider
-            string="Please rank Current Ratio (1 being the most important to you, 5 being the least important to you)"
+            string="Please weigh Current Ratio (1 being the most important to you, 5 being the least important to you)"
             id="Current"
             handleChange={this.handleCurrentChange}
           />
@@ -94,7 +94,7 @@ class Profile extends Component {
         <Grid item md="3"></Grid>
         <Grid item md="6" className="centerGrid">
           <Slider
-            string="Please rank Return on Equity (1 being the most important to you, 5 being the least important to you)"
+            string="Please weigh Return on Equity (1 being the most important to you, 5 being the least important to you)"
             id="ROE"
             handleChange={this.handleROEChange}
           />
@@ -109,7 +109,7 @@ class Profile extends Component {
         <Grid item md="3"></Grid>
         <Grid item md="6" className="centerGrid">
           <Slider
-            string="Please rank Dividend Yield (1 being the most important to you, 5 being the least important to you)"
+            string="Please weigh Dividend Yield (1 being the most important to you, 5 being the least important to you)"
             id="Dividend"
             handleChange={this.handleDividendChange}
           />
@@ -124,7 +124,7 @@ class Profile extends Component {
         <Grid item md="3"></Grid>
         <Grid item md="6" className="centerGrid">
           <Slider
-            string="Please rank Earnings per Share (1 being the most important to you, 5 being the least important to you)"
+            string="Please weigh Earnings per Share (1 being the most important to you, 5 being the least important to you)"
             id="EPS"
             handleChange={this.handleEPSChange}
           />

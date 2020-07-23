@@ -100,25 +100,25 @@ export class Analysis extends Component {
           <Grid item md={1} sm={0} />
           <Grid item md={3} sm={2} xs={0}>
             <Tooltip
-              title={"Current Ratio (Rank: " + this.state.current + ")"}
+              title={"Current Ratio (Weight: " + this.state.current + ")"}
               string="Measures the company’s ability to pay off short-term liabilities with current assets"
             />
 
             <Tooltip
-              title={"Return on Equity (Rank: " + this.state.ROE + ")"}
+              title={"Return on Equity (Weight: " + this.state.ROE + ")"}
               string="Measures how efficiently a company is using its equity to generate profit"
             />
             <Tooltip
-              title={"Dividend Yield (Rank: " + this.state.dividend + ")"}
+              title={"Dividend Yield (Weight: " + this.state.dividend + ")"}
               string="Measures the amount of dividends attributed to shareholders relative to the market value per share"
             />
             <Tooltip
-              title={"Earnings per Share (Rank: " + this.state.EPS + ")"}
+              title={"Earnings per Share (Weight: " + this.state.EPS + ")"}
               string="Measures the amount of net income earned for each share outstanding"
             />
             <Link to="/profile" style={{ textDecoration: "none" }}>
               <Button variant="contained" color="primary" size="medium">
-                Modify Ranks
+                Modify Weightage
               </Button>
             </Link>
           </Grid>

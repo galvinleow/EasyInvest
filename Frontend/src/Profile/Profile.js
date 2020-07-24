@@ -17,12 +17,12 @@ class Profile extends Component {
       current: 1,
       ROE: 1,
       Dividend: 1,
-      EPS: 1,
+      PE: 1,
     };
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleCurrentChange = this.handleCurrentChange.bind(this);
     this.handleDividendChange = this.handleDividendChange.bind(this);
-    this.handleEPSChange = this.handleEPSChange.bind(this);
+    this.handlePEChange = this.handlePEChange.bind(this);
     this.handleROEChange = this.handleROEChange.bind(this);
   }
 
@@ -38,8 +38,8 @@ class Profile extends Component {
     this.setState({ Dividend: value });
   }
 
-  handleEPSChange(value) {
-    this.setState({ EPS: value });
+  handlePEChange(value) {
+    this.setState({ PE: value });
   }
 
   handleSubmit() {
@@ -51,7 +51,7 @@ class Profile extends Component {
         {
           "DIVIDENDS YIELD": this.state.Dividend,
           "CURRENT RATIO": this.state.current,
-          "PE RATIO": this.state.EPS,
+          "PE RATIO": this.state.PE,
           "RETURN ON EQUITY %": this.state.ROE,
         },
       ],
@@ -75,10 +75,17 @@ class Profile extends Component {
   render() {
     return (
       <Grid container align="center">
+        <Grid item md="12">
+          <h1 style={{ fontFamily: "sans-serif", fontSize: 22 }}>
+            Please weigh the following financial ratios (1 being the least
+            important to you, 5 being the most important to you)
+          </h1>
+        </Grid>
         <Grid item md="3"></Grid>
+
         <Grid item md="6" className="centerGrid">
           <Slider
-            string="Please weigh Current Ratio (1 being the most important to you, 5 being the least important to you)"
+            string="Current Ratio"
             id="Current"
             handleChange={this.handleCurrentChange}
           />
@@ -94,7 +101,7 @@ class Profile extends Component {
         <Grid item md="3"></Grid>
         <Grid item md="6" className="centerGrid">
           <Slider
-            string="Please weigh Return on Equity (1 being the most important to you, 5 being the least important to you)"
+            string="Return on Equity"
             id="ROE"
             handleChange={this.handleROEChange}
           />
@@ -109,7 +116,7 @@ class Profile extends Component {
         <Grid item md="3"></Grid>
         <Grid item md="6" className="centerGrid">
           <Slider
-            string="Please weigh Dividend Yield (1 being the most important to you, 5 being the least important to you)"
+            string="Dividend Yield"
             id="Dividend"
             handleChange={this.handleDividendChange}
           />
@@ -124,9 +131,9 @@ class Profile extends Component {
         <Grid item md="3"></Grid>
         <Grid item md="6" className="centerGrid">
           <Slider
-            string="Please weigh Earnings per Share (1 being the most important to you, 5 being the least important to you)"
-            id="EPS"
-            handleChange={this.handleEPSChange}
+            string="Price per Earning"
+            id="PE"
+            handleChange={this.handlePEChange}
           />
         </Grid>
         <Grid item md="1">

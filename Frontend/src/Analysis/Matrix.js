@@ -57,8 +57,8 @@ class Table extends Component {
           type: "numeric",
         },
         {
-          title: "Earnings per share (Score)",
-          field: "EPS",
+          title: "Price per Earning (Score)",
+          field: "PE",
           type: "numeric",
         },
         {
@@ -87,7 +87,7 @@ class Table extends Component {
               CR: share["CURRENT RATIO SCORE"],
               ROE: share["RETURN ON EQUITY % SCORE"],
               Dividend: share["DIVIDENDS YIELD SCORE"],
-              EPS: share["PE RATIO SCORE"],
+              PE: share["PE RATIO SCORE"],
               Score: share["TOTAL SCORE %"],
             };
           });

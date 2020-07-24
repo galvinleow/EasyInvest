@@ -5,12 +5,14 @@ import jwt
 import requests
 import telegram
 from telegram import (ReplyKeyboardMarkup, ReplyKeyboardRemove)
-from telegram.ext import (Updater, CommandHandler, MessageHandler, Filters, ConversationHandler)
+from telegram.ext import (Updater, CommandHandler,
+                          MessageHandler, Filters, ConversationHandler)
 
 from method import shares
 
 # Enable logging
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+logging.basicConfig(
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 logger = logging.getLogger(__name__)
 TOKEN = '1334812224:AAH4FVVKxyFKVNkPkU_0HoLRt6bX0clbFpg'
@@ -19,13 +21,18 @@ bot = telegram.Bot(token=TOKEN)
 USERNAME, PASSWORD, LOGIN, FEATURE, SHAREDATA, ANALYSIS, END = range(7)
 
 login_keyboard = [['CONFIRM LOGIN', 'RESTART LOGIN']]
-login_markup = ReplyKeyboardMarkup(login_keyboard, resize_keyboard=True, one_time_keyboard=True)
+login_markup = ReplyKeyboardMarkup(
+    login_keyboard, resize_keyboard=True, one_time_keyboard=True)
 login_error_keyboard = [['RESTART LOGIN', 'END SESSION']]
-login_error_markup = ReplyKeyboardMarkup(login_error_keyboard, resize_keyboard=True, one_time_keyboard=True)
-feature_keyboard = [['GET SHARE DATA', 'GET ASSET DETAILS', "INVESTMENT ANALYSIS"]]
-feature_markup = ReplyKeyboardMarkup(feature_keyboard, resize_keyboard=True, one_time_keyboard=True)
+login_error_markup = ReplyKeyboardMarkup(
+    login_error_keyboard, resize_keyboard=True, one_time_keyboard=True)
+feature_keyboard = [
+    ['GET SHARE DATA', 'GET ASSET DETAILS', "INVESTMENT ANALYSIS"]]
+feature_markup = ReplyKeyboardMarkup(
+    feature_keyboard, resize_keyboard=True, one_time_keyboard=True)
 end_keyboard = [['RESTART', 'END SESSION']]
-end_markup = ReplyKeyboardMarkup(end_keyboard, resize_keyboard=True, one_time_keyboard=True)
+end_markup = ReplyKeyboardMarkup(
+    end_keyboard, resize_keyboard=True, one_time_keyboard=True)
 
 
 def facts_to_str(user_data):
@@ -37,8 +44,8 @@ def facts_to_str(user_data):
 
 
 def start(update, context):
-    update.message.reply_text("Hi! Welcome to EasyInvest! It is nice having you here!"
-                              + "\nPlease enter username to begain")
+    update.message.reply_text("Hi! Welcome to EasyInvest! It is nice having you here."
+                              + "\nPlease enter username to begin")
     return USERNAME
 
 
@@ -60,7 +67,7 @@ def password(update, context):
     text = update.message.text
     user_data[category] = text
     logger.info("Password of %s: %s", user.first_name, update.message.text)
-    update.message.reply_text("Thank you for providing the information! Please confirm login!",
+    update.message.reply_text("Thank you for providing the information. Please confirm login!",
                               reply_markup=login_markup)
     return LOGIN
 
@@ -68,7 +75,8 @@ def password(update, context):
 def login(update, context):
     user = update.message.from_user
     user_data = context.user_data
-    logger.info("Confirm login? of %s: %s", user.first_name, update.message.text)
+    logger.info("Confirm login? of %s: %s",
+                user.first_name, update.message.text)
     # POST requests to backend endpoint for login
     newHeaders = {'Content-type': 'application/json', 'Accept': '*/*'}
     url = "http://localhost:5200/login"
@@ -84,13 +92,15 @@ def login(update, context):
         user_uuid = jwt.decode(token, 'secret')["identity"]["uuid"]
         user_data['uuid'] = user_uuid
         update.message.reply_text("Login Successful")
-        update.message.reply_text("What can we do for you today? :)", reply_markup=feature_markup)
+        update.message.reply_text(
+            "What can we do for you today? :)", reply_markup=feature_markup)
         return FEATURE
 
 
 def feature_share_data(update, context):
     user = update.message.from_user
-    logger.info("Get Share Data of %s: %s", user.first_name, update.message.text)
+    logger.info("Get Share Data of %s: %s",
+                user.first_name, update.message.text)
     update.message.reply_text('Please key in the ticker code for data',
                               reply_markup=ReplyKeyboardRemove())
     return SHAREDATA
@@ -110,7 +120,8 @@ def share_data(update, context):
 def feature_asset(update, context):
     user = update.message.from_user
     user_data = context.user_data
-    logger.info("Assert Overview of %s: %s", user.first_name, update.message.text)
+    logger.info("Assert Overview of %s: %s",
+                user.first_name, update.message.text)
     # GET requests to backend endpoint for getting asset
     url = "http://localhost:5200/getDataFromUUID/asset/" + user_data['uuid']
     response = requests.get(url)
@@ -139,7 +150,8 @@ def feature_asset(update, context):
 def feature_weightage(update, context):
     user = update.message.from_user
     user_data = context.user_data
-    logger.info("Investment Analysis of %s: %s", user.first_name, update.message.text)
+    logger.info("Investment Analysis of %s: %s",
+                user.first_name, update.message.text)
     # GET requests to backend endpoint for getting rank
     url = "http://localhost:5200/getDataFromUUID/rank/" + user_data['uuid']
     response = requests.get(url)
@@ -159,7 +171,8 @@ def feature_weightage(update, context):
 def analysis(update, context):
     user = update.message.from_user
     user_data = context.user_data
-    logger.info("Investment Analysis Ticker of %s: %s", user.first_name, update.message.text)
+    logger.info("Investment Analysis Ticker of %s: %s",
+                user.first_name, update.message.text)
     # GET requests to backend endpoint for shares score
     url = "http://localhost:5200/getShareInformation/" + update.message.text
     response = requests.get(url)
@@ -227,8 +240,10 @@ def main():
                     MessageHandler(Filters.regex('^RESTART LOGIN$'), start)],
 
             FEATURE: [CommandHandler('start', start),
-                      MessageHandler(Filters.regex('^GET SHARE DATA$'), feature_share_data),
-                      MessageHandler(Filters.regex('^GET ASSET DETAILS$'), feature_asset),
+                      MessageHandler(Filters.regex(
+                          '^GET SHARE DATA$'), feature_share_data),
+                      MessageHandler(Filters.regex(
+                          '^GET ASSET DETAILS$'), feature_asset),
                       MessageHandler(Filters.regex('^INVESTMENT ANALYSIS$'), feature_weightage)],
 
             SHAREDATA: [CommandHandler('start', start), MessageHandler(Filters.text, share_data)],

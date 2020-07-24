@@ -60,8 +60,8 @@ class Table extends Component {
           type: "numeric",
         },
         {
-          title: "Earnings per share (growth)",
-          field: "EPS",
+          title: "Price per Earning",
+          field: "PE",
           type: "numeric",
         },
       ],
@@ -85,7 +85,7 @@ class Table extends Component {
               CR: share["CURRENT RATIO"],
               ROE: share["RETURN ON EQUITY %"],
               Dividend: share["DIVIDENDS YIELD"],
-              EPS: share["PE RATIO"],
+              PE: share["PE RATIO"],
             };
           });
           this.setState({ data: newShares });

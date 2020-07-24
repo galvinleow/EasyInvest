@@ -479,7 +479,7 @@ def get_financial_data(client, user_uuid):
         # Today month/year datetime
         str_today = str(today.year) + "_" + today.strftime("%m") + "_" + str(today.day)
         if platform.system() != "Windows":
-            data = shares.read_financial_data_file("../Crawler/data/final/Final_" + str_today + ".json")
+            data = shares.read_financial_data_file("/Users/zermainelew/Documents/orbital/Crawler/data/final/Final_" + str_today + ".json")
         else:
             data = shares.read_financial_data_file("..\\Crawler\\data\\final\\Final_" + str_today + ".json")
         if data == "Error - Could not find file":

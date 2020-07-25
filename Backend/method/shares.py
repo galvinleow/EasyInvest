@@ -92,7 +92,7 @@ def get_score_roe(share):
     mid_score = 3
     if indicator_value < low:
         return 0.0
-    elif indicator_value <= 14:
+    elif indicator_value <= mid:
         return ((indicator_value - low) / (mid - low)) * mid_score
     else:
         value = (((indicator_value - mid) / (high - mid)) * (5 - mid_score)) + mid_score
